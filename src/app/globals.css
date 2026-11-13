@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply bg-slate-50 text-slate-900 antialiased; }
+}
+
+@layer components {
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition; }
+  .btn-primary { @apply bg-brand text-white shadow-lg shadow-brand/25 hover:-translate-y-0.5 hover:bg-blue-700; }
+  .btn-outline { @apply border border-slate-300 bg-white text-slate-800 hover:border-brand hover:text-brand; }
+  .section-title { @apply text-2xl font-extrabold tracking-tight md:text-3xl; }
+
+  .aurora {
+    background:
+      radial-gradient(circle at 8% 12%, rgba(20, 184, 166, 0.45), transparent 34%),
+      radial-gradient(circle at 92% 6%, rgba(124, 92, 255, 0.55), transparent 36%),
+      radial-gradient(circle at 78% 92%, rgba(236, 72, 153, 0.35), transparent 38%),
+      radial-gradient(circle at 30% 100%, rgba(37, 99, 235, 0.4), transparent 40%),
+      #060a1f;
+  }
+  .glass {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+  }
+  .lift { transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease; }
+  .lift:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.11); border-color: rgba(255, 255, 255, 0.3); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
