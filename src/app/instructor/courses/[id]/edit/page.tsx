@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { requireRole } from "@/lib/auth";
-import { updateCourse, deleteCourse, addLesson, deleteLesson } from "../../actions";
+import { updateCourse, deleteCourse, addLesson, deleteLesson } from "../../../actions";
 
 export default async function ManageCourse({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -18,7 +18,10 @@ export default async function ManageCourse({ params }: { params: Promise<{ id: s
       <section>
         <h1 className="text-3xl font-bold">Edit course</h1>
         <p className="text-sm text-slate-500">Status: {course.status}</p>
-        {course.thumbnail_url && <img src={course.thumbnail_url} alt="" className="mt-3 h-32 rounded-lg object-cover" />}
+        {course.thumbnail_url && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={course.thumbnail_url} alt="" className="mt-3 h-32 rounded-lg object-cover" />
+        )}
         <form action={updateCourse.bind(null, course.id)} className="mt-4 space-y-4">
           <label className="block text-sm">Title<input name="title" defaultValue={course.title} required minLength={3} className={i} /></label>
           <label className="block text-sm">Description<textarea name="description" defaultValue={course.description ?? ""} rows={4} className={i} /></label>
@@ -31,7 +34,7 @@ export default async function ManageCourse({ params }: { params: Promise<{ id: s
             </select>
           </label>
           <label className="block text-sm">Duration<input name="duration" defaultValue={course.duration ?? ""} className={i} /></label>
-          <label className="block text-sm">Nayi thumbnail (optional)<input type="file" name="thumbnail" accept="image/*" className={i} /></label>
+          <label className="block text-sm">New thumbnail (optional)<input type="file" name="thumbnail" accept="image/*" className={i} /></label>
           <div className="flex gap-3">
             <button className="rounded-lg border px-4 py-2">Save draft</button>
             <button name="submit" value="1" className="rounded-lg bg-brand px-4 py-2 text-white">Submit for review</button>
@@ -54,14 +57,14 @@ export default async function ManageCourse({ params }: { params: Promise<{ id: s
                 <button className="text-sm text-red-600">Delete</button>
               </form>
             </li>
-          )) : <li className="text-slate-500">Abhi koi lesson nahi.</li>}
+          )) : <li className="text-slate-500">No lessons yet.</li>}
         </ul>
 
         <form action={addLesson.bind(null, course.id)} className="mt-6 space-y-3 rounded-lg border p-4">
-          <h3 className="font-semibold">Naya lesson add karo</h3>
+          <h3 className="font-semibold">Add new lesson</h3>
           <input name="title" placeholder="Lesson title" required className={i} />
           <input name="video_url" placeholder="Video link (YouTube etc., optional)" className={i} />
-          <textarea name="content" rows={3} placeholder="Lesson ka text (optional)" className={i} />
+          <textarea name="content" rows={3} placeholder="Lesson text (optional)" className={i} />
           <button className="rounded-lg bg-brand px-4 py-2 text-white">Add lesson</button>
         </form>
       </section>

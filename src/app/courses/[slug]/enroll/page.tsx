@@ -14,12 +14,23 @@ export default async function EnrollPage({ params }: { params: Promise<{ slug: s
   const { data: { user } } = await sb.auth.getUser();
   if (!user) redirect(`/login?next=/courses/${slug}/enroll`);
 
-  const { data: course } = await sb
+  const isUuid =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      slug
+    );
+
+  let cq = sb
     .from("courses")
-    .select("id, title, thumbnail_url, level, duration, profiles(full_name)")
-    .eq("slug", slug)
-    .eq("status", "published")
-    .maybeSingle();
+    .select("id, slug, title, thumbnail_url, level, duration, profiles(full_name)")
+    .eq("status", "published");
+
+  if (isUuid) {
+    cq = cq.or(`slug.eq.${slug},id.eq.${slug}`);
+  } else {
+    cq = cq.eq("slug", slug);
+  }
+
+  const { data: course } = await cq.maybeSingle();
   if (!course) notFound();
 
   const { data: me } = await sb.from("profiles").select("full_name, role").eq("id", user.id).single();

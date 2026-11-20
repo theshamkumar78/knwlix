@@ -1,18 +1,34 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, BookOpen, Sparkles, Award } from "lucide-react";
 import CourseCard from "@/components/courses/CourseCard";
 import { createClient, supabaseConfigured } from "@/lib/supabase/server";
 import type { Course } from "@/types";
 
-export default async function InstructorProfile({ params }: { params: Promise<{ id: string }> }) {
+export default async function InstructorProfile({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   if (!supabaseConfigured()) notFound();
   const sb = await createClient();
 
-  const { data: p } = await sb.from("profiles").select("id, full_name, role").eq("id", id).maybeSingle();
-  if (!p || p.role !== "instructor") notFound();
-  const { data: ip } = await sb.from("instructor_profiles").select("*").eq("id", id).maybeSingle();
+  const { data: p } = await sb
+    .from("profiles")
+    .select("id, full_name, role")
+    .eq("id", id)
+    .maybeSingle();
+
+  // Support both instructor and admin roles
+  if (!p || (p.role !== "instructor" && p.role !== "admin")) notFound();
+
+  const { data: ip } = await sb
+    .from("instructor_profiles")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
   const { data } = await sb
     .from("courses")
     .select("*, profiles(full_name)")
@@ -20,63 +36,129 @@ export default async function InstructorProfile({ params }: { params: Promise<{ 
     .eq("status", "published")
     .order("created_at", { ascending: false });
 
-  const courses = (data as Course[]) ?? [];
+  // Fetch reviews for rating badges
+  const { data: revData } = await sb
+    .from("course_reviews")
+    .select("course_id, rating");
+
+  const revMap = new Map<string, number[]>();
+  (revData ?? []).forEach((r: any) => {
+    const list = revMap.get(r.course_id) || [];
+    list.push(r.rating);
+    revMap.set(r.course_id, list);
+  });
+
+  const courses = ((data as any[]) ?? []).map((c) => {
+    const ratings = revMap.get(c.id) || [];
+    const reviews_count = ratings.length;
+    const avg_rating = reviews_count
+      ? Number((ratings.reduce((a, b) => a + b, 0) / reviews_count).toFixed(1))
+      : null;
+    return { ...c, avg_rating, reviews_count };
+  });
+
   const name = p.full_name ?? "Knowlix instructor";
-  const subjects = Array.from(new Set(courses.map((c) => (c.category ?? "").trim()).filter(Boolean)));
+  const subjects = Array.from(
+    new Set(courses.map((c) => (c.category ?? "").trim()).filter(Boolean))
+  );
 
   return (
-    <>
-      <section className="aurora text-white">
-        <div className="mx-auto max-w-5xl px-4 py-12">
-          <Link href="/instructors" className="inline-flex items-center gap-1 text-sm text-white/70 hover:text-white">
-            <ArrowLeft size={16} /> All instructors
-          </Link>
-          <div className="mt-6 flex flex-wrap items-center gap-5">
-            <span className="grid h-24 w-24 place-items-center rounded-full bg-gradient-to-br from-teal-400 to-violet text-4xl font-bold">
-              {name.charAt(0).toUpperCase()}
-            </span>
-            <div>
-              <h1 className="text-3xl font-extrabold md:text-4xl">{name}</h1>
-              <p className="mt-1 text-white/70">{ip?.headline ?? "Instructor at Knowlix"}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
+    <main className="min-h-screen bg-[#f8fafc] text-slate-900 pb-20">
+      {/* 1. Header Profile Banner */}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-10 pb-6">
+        <Link
+          href="/courses"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 transition hover:text-blue-600"
+        >
+          <ArrowLeft size={14} /> Back to courses
+        </Link>
+
+        <div className="mt-6 rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm flex flex-wrap items-center gap-6">
+          <span className="grid h-24 w-24 place-items-center rounded-3xl bg-blue-600 text-4xl font-extrabold text-white shadow-lg shadow-blue-600/25">
+            {name.charAt(0).toUpperCase()}
+          </span>
+
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+                {name}
+              </h1>
+              <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700 border border-blue-200 capitalize">
+                Verified {p.role}
+              </span>
+            </div>
+
+            <p className="mt-2 text-sm text-slate-600">
+              {ip?.headline ?? "Instructor & Academic Specialist at Knowlix"}
+            </p>
+
+            {subjects.length > 0 && (
+              <div className="mt-4 flex flex-wrap gap-2">
                 {subjects.map((s) => (
-                  <span key={s} className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">{s}</span>
+                  <span
+                    key={s}
+                    className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 border border-slate-200"
+                  >
+                    {s}
+                  </span>
                 ))}
               </div>
-            </div>
+            )}
           </div>
         </div>
       </section>
 
-      <div className="mx-auto max-w-5xl space-y-10 px-4 py-12">
+      {/* 2. Bio & Experience */}
+      <div className="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8 pb-16">
         {(ip?.bio || ip?.experience) && (
           <section className="grid gap-6 md:grid-cols-2">
             {ip?.bio && (
-              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <h2 className="text-lg font-bold">About</h2>
-                <p className="mt-2 whitespace-pre-line text-slate-600">{ip.bio}</p>
+              <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+                <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <Sparkles size={16} className="text-blue-600" /> About
+                </h2>
+                <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-600">
+                  {ip.bio}
+                </p>
               </div>
             )}
             {ip?.experience && (
-              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <h2 className="text-lg font-bold">Experience</h2>
-                <p className="mt-2 whitespace-pre-line text-slate-600">{ip.experience}</p>
+              <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+                <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <Award size={16} className="text-amber-500" /> Experience & Background
+                </h2>
+                <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-600">
+                  {ip.experience}
+                </p>
               </div>
             )}
           </section>
         )}
 
+        {/* 3. Courses by Instructor */}
         <section>
-          <h2 className="text-2xl font-extrabold">Courses by {name}</h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
+              <BookOpen size={22} className="text-blue-600" /> Courses by {name}
+            </h2>
+            <span className="text-xs font-bold text-slate-500">
+              {courses.length} course{courses.length === 1 ? "" : "s"} published
+            </span>
+          </div>
+
           {courses.length ? (
-            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {courses.map((c) => <CourseCard key={c.id} c={c} />)}
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {courses.map((c) => (
+                <CourseCard key={c.id} c={c} />
+              ))}
             </div>
           ) : (
-            <p className="mt-4 text-slate-500">No published courses yet.</p>
+            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500">
+              <p>No published courses by this instructor yet.</p>
+            </div>
           )}
         </section>
       </div>
-    </>
+    </main>
   );
 }

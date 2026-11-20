@@ -1,79 +1,201 @@
 "use client";
+
 import Link from "next/link";
-import Image from "next/image";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import {
+  GraduationCap,
+  Menu,
+  X,
+  Search,
+  LogOut,
+  LayoutDashboard,
+  User,
+} from "lucide-react";
 import { signOut } from "@/app/auth-actions";
 
 type Role = "student" | "instructor" | "admin" | null;
 
-const menus: Record<string, string[][]> = {
-  guest: [["Home", "/"], ["Courses", "/courses"], ["Instructors", "/instructors"], ["About", "/about"]],
-  student: [["Home", "/"], ["Courses", "/courses"], ["My Courses", "/dashboard/courses"], ["Progress", "/dashboard/progress"]],
-  instructor: [["Home", "/"], ["Dashboard", "/instructor"], ["My Courses", "/instructor/courses"], ["Create Course", "/instructor/courses/create"]],
-  admin: [["Home", "/"], ["Admin Panel", "/admin"], ["Courses", "/courses"]],
-};
+const navLinks = [
+  { label: "Home", href: "/" },
+  { label: "Courses", href: "/courses" },
+  { label: "Categories", href: "/#categories" },
+  { label: "About Us", href: "/about" },
+  { label: "Contact", href: "/contact" },
+  { label: "FAQ", href: "/faq" },
+];
 
-export default function NavbarClient({ role, name }: { role: Role; name: string | null }) {
+export default function NavbarClient({
+  role,
+  name,
+}: {
+  role: Role;
+  name: string | null;
+}) {
   const [open, setOpen] = useState(false);
-  const links = menus[role ?? "guest"];
+
+  const getDashboardHref = () => {
+    if (role === "admin") return "/admin";
+    if (role === "instructor") return "/instructor";
+    return "/dashboard";
+  };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-navy/95 text-white backdrop-blur">
-      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4" aria-label="Main">
-        <Link href="/" aria-label="Knowlix home">
-          <Image src="/logo/knowlix-wordmark.png" alt="Knowlix" width={120} height={21} priority />
+    <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/95 backdrop-blur-md transition-colors">
+      <nav
+        className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"
+        aria-label="Main"
+      >
+        {/* Logo */}
+        <Link
+          href="/"
+          aria-label="Knowlix home"
+          className="flex items-center gap-2.5 rounded-xl transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <span className="grid h-10 w-10 place-items-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-600/25">
+            <GraduationCap size={24} />
+          </span>
+          <span className="text-2xl font-black tracking-tight text-slate-900">
+            Knowl<span className="text-blue-600">ix</span>
+          </span>
         </Link>
 
-        <ul className="hidden gap-8 md:flex">
-          {links.map(([l, h]) => (
-            <li key={h}><Link href={h} className="text-sm text-slate-300 hover:text-white">{l}</Link></li>
+        {/* Center Desktop Navigation */}
+        <ul className="hidden items-center gap-7 lg:flex">
+          {navLinks.map((item) => (
+            <li key={item.label}>
+              <Link
+                href={item.href}
+                className="text-sm font-semibold text-slate-600 transition hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg px-2 py-1"
+              >
+                {item.label}
+              </Link>
+            </li>
           ))}
         </ul>
 
-        <div className="hidden items-center gap-3 md:flex">
+        {/* Right Action / Auth Buttons */}
+        <div className="hidden items-center gap-4 md:flex">
+          <Link
+            href="/courses"
+            aria-label="Search courses"
+            className="grid h-10 w-10 place-items-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-blue-600"
+          >
+            <Search size={18} />
+          </Link>
+
           {role ? (
-            <>
-              <span className="text-sm text-slate-300">{name}</span>
-              <span className="rounded-full bg-white/10 px-3 py-1 text-xs capitalize">{role}</span>
+            <div className="flex items-center gap-3">
+              <Link
+                href={getDashboardHref()}
+                className="inline-flex min-h-[42px] items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-bold text-slate-800 shadow-xs transition hover:border-blue-500 hover:bg-blue-50/50 hover:text-blue-600"
+              >
+                <span className="grid h-6 w-6 place-items-center rounded-full bg-blue-600 text-xs font-bold text-white">
+                  {(name ?? "U").charAt(0).toUpperCase()}
+                </span>
+                <span>{name ?? "Account"}</span>
+                <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold uppercase text-blue-700">
+                  {role}
+                </span>
+              </Link>
+
               <form action={signOut}>
-                <button className="rounded-full px-4 py-2 text-sm hover:bg-white/10">Logout</button>
+                <button
+                  type="submit"
+                  title="Sign out"
+                  className="grid h-10 w-10 place-items-center rounded-full text-slate-400 transition hover:bg-rose-50 hover:text-rose-600"
+                >
+                  <LogOut size={16} />
+                </button>
               </form>
-            </>
+            </div>
           ) : (
-            <>
-              <Link href="/login" className="rounded-full px-4 py-2 text-sm hover:bg-white/10">Login</Link>
-              <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-                <Link href="/signup" className="block rounded-full bg-brand px-4 py-2 text-sm font-medium">Sign Up</Link>
+            <div className="flex items-center gap-2.5">
+              <Link
+                href="/login"
+                className="inline-flex min-h-[42px] items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                Login
+              </Link>
+              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                <Link
+                  href="/signup"
+                  className="inline-flex min-h-[42px] items-center justify-center rounded-full bg-blue-600 px-6 py-2 text-sm font-bold text-white shadow-md shadow-blue-600/25 transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  Sign Up
+                </Link>
               </motion.div>
-            </>
+            </div>
           )}
         </div>
 
-        <button className="md:hidden" aria-label="Toggle menu" aria-expanded={open} onClick={() => setOpen(!open)}>
-          {open ? <X /> : <Menu />}
+        {/* Mobile Hamburger Button */}
+        <button
+          className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-700 transition hover:bg-slate-100 md:hidden focus:outline-none focus:ring-2 focus:ring-blue-500"
+          aria-label="Toggle menu"
+          aria-expanded={open}
+          onClick={() => setOpen(!open)}
+        >
+          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </nav>
 
+      {/* Mobile Slide-down Menu */}
       <AnimatePresence>
         {open && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden md:hidden">
-            <ul className="flex flex-col gap-1 px-4 pb-4">
-              {links.map(([l, h]) => (
-                <li key={h}><Link href={h} onClick={() => setOpen(false)} className="block rounded-lg px-3 py-3 hover:bg-white/10">{l}</Link></li>
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden border-t border-slate-100 bg-white shadow-xl md:hidden"
+          >
+            <ul className="flex flex-col gap-1 px-4 py-4">
+              {navLinks.map((item) => (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    className="flex min-h-[44px] items-center rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
               ))}
+
               {role ? (
-                <li>
+                <li className="mt-2 border-t border-slate-100 pt-3 space-y-2">
+                  <Link
+                    href={getDashboardHref()}
+                    onClick={() => setOpen(false)}
+                    className="flex min-h-[44px] items-center gap-2 rounded-xl bg-blue-50 px-4 py-2.5 text-sm font-bold text-blue-700"
+                  >
+                    <LayoutDashboard size={16} />
+                    <span>Go to {role.toUpperCase()} Dashboard</span>
+                  </Link>
                   <form action={signOut}>
-                    <button className="block w-full rounded-lg px-3 py-3 text-left hover:bg-white/10">Logout</button>
+                    <button className="flex min-h-[44px] w-full items-center gap-2 rounded-xl px-4 py-2 text-left text-sm font-semibold text-rose-600 transition hover:bg-rose-50">
+                      <LogOut size={16} />
+                      <span>Sign out ({name})</span>
+                    </button>
                   </form>
                 </li>
               ) : (
-                <>
-                  <li><Link href="/login" onClick={() => setOpen(false)} className="block rounded-lg px-3 py-3 hover:bg-white/10">Login</Link></li>
-                  <li><Link href="/signup" onClick={() => setOpen(false)} className="block rounded-lg px-3 py-3 hover:bg-white/10">Sign Up</Link></li>
-                </>
+                <li className="mt-2 flex flex-col gap-2 border-t border-slate-100 pt-3">
+                  <Link
+                    href="/login"
+                    onClick={() => setOpen(false)}
+                    className="flex min-h-[44px] items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-800"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/signup"
+                    onClick={() => setOpen(false)}
+                    className="flex min-h-[44px] items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-bold text-white shadow-md shadow-blue-600/20"
+                  >
+                    Sign Up
+                  </Link>
+                </li>
               )}
             </ul>
           </motion.div>

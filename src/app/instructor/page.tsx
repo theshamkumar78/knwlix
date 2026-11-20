@@ -1,13 +1,13 @@
 import Link from "next/link";
-import { Plus, ArrowRight } from "lucide-react";
+import { Plus, ArrowRight, BookOpen, Users, DollarSign, Settings } from "lucide-react";
 import { requireRole } from "@/lib/auth";
 import GlassShell from "@/components/dashboard/GlassShell";
 
-const badge: Record<string, string> = {
-  draft: "bg-white/15 text-white/80",
-  pending: "bg-amber-400/20 text-amber-200",
-  published: "bg-emerald-400/20 text-emerald-200",
-  rejected: "bg-rose-400/20 text-rose-200",
+const badgeTone: Record<string, string> = {
+  draft: "bg-slate-100 text-slate-700",
+  pending: "bg-amber-100 text-amber-800",
+  published: "bg-emerald-100 text-emerald-800",
+  rejected: "bg-rose-100 text-rose-800",
 };
 
 export default async function InstructorHome() {
@@ -15,7 +15,7 @@ export default async function InstructorHome() {
 
   const { data: courses } = await sb
     .from("courses")
-    .select("id, title, status, created_at")
+    .select("id, title, status, created_at, category")
     .eq("instructor_id", user.id)
     .order("created_at", { ascending: false });
   const ids = (courses ?? []).map((c: any) => c.id);
@@ -32,95 +32,136 @@ export default async function InstructorHome() {
     students: (enr ?? []).filter((e: any) => e.course_id === c.id).length,
     lessons: (les ?? []).filter((l: any) => l.course_id === c.id).length,
   }));
-  const published = list.filter((c) => c.status === "published").length;
-  const pending = list.filter((c) => c.status === "pending").length;
-  const students = new Set((enr ?? []).map((e: any) => e.student_id)).size;
-  const name = profile.full_name ?? user.email?.split("@")[0] ?? "instructor";
+  const studentsCount = new Set((enr ?? []).map((e: any) => e.student_id)).size;
+  const name = profile.full_name ?? user.email?.split("@")[0] ?? "Instructor";
 
   return (
     <GlassShell active="home" variant="instructor">
-      <div className="space-y-5">
-        <header>
-          <p className="text-sm text-white/70">Knowlix · Instructor</p>
-          <h1 className="mt-1 text-3xl font-extrabold md:text-4xl">Welcome back, {name}</h1>
-        </header>
-
-        <section className="glass relative overflow-hidden p-7 md:flex md:items-center md:justify-between md:gap-6">
-          <div className="pointer-events-none absolute -right-16 -top-16 h-60 w-60 rounded-full bg-violet/40 blur-3xl" />
-          <div className="relative">
-            <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">
-              {pending ? `${pending} awaiting review` : "Your teaching space"}
-            </span>
-            <h2 className="mt-4 text-3xl font-extrabold">
-              {list.length ? "Keep your courses growing" : "Create your first course"}
-            </h2>
-            <p className="mt-2 max-w-md text-white/70">
-              Add lessons, upload a thumbnail and submit for review. Approved courses become visible to every student.
+      <div className="space-y-8">
+        {/* 1. Header (PDF Page 5) */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+              Instructor Dashboard
+            </h1>
+            <p className="mt-1 text-sm text-slate-500">
+              Manage your courses and students
             </p>
+          </div>
+
+          <div className="flex items-center gap-3">
             <Link
               href="/instructor/courses/create"
-              className="mt-6 inline-flex items-center gap-2 rounded-full bg-amber-400 px-6 py-3 text-sm font-bold text-amber-950 transition hover:-translate-y-0.5"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-blue-600/20 hover:bg-blue-700 transition"
             >
-              <Plus size={16} /> Create course
+              <Plus size={16} /> Add Course
             </Link>
-          </div>
-
-          <Link
-            href="/instructor/students"
-            aria-label="View enrolled students"
-            className="group relative mt-6 block shrink-0 text-center md:mt-0"
-          >
-            <div className="grid h-36 w-36 place-items-center rounded-full border-[10px] border-white/15 bg-white/5 transition group-hover:scale-105 group-hover:border-teal-300/60">
-              <div>
-                <p className="text-4xl font-extrabold">{students}</p>
-                <p className="text-xs text-white/70">student{students === 1 ? "" : "s"}</p>
-              </div>
+            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-blue-600 text-white font-bold shadow-md shadow-blue-600/20">
+              {name.charAt(0).toUpperCase()}
             </div>
-            <p className="mt-2 text-xs font-semibold text-amber-300">View students →</p>
-          </Link>
-        </section>
+          </div>
+        </div>
 
-        <section aria-label="Your stats" className="grid gap-4 sm:grid-cols-3">
-          <Link href="/instructor/courses" className="glass lift block p-5 text-white">
-            <p className="text-sm text-white/70"><span className="mr-2 inline-block h-2 w-2 rounded-full bg-teal-300" />Total courses</p>
-            <p className="mt-1 text-3xl font-extrabold">{list.length}</p>
-            <p className="mt-2 text-xs font-semibold text-amber-300">View all →</p>
-          </Link>
-          <Link href="/instructor/courses?status=published" className="glass lift block p-5 text-white">
-            <p className="text-sm text-white/70"><span className="mr-2 inline-block h-2 w-2 rounded-full bg-emerald-300" />Published</p>
-            <p className="mt-1 text-3xl font-extrabold">{published}</p>
-            <p className="mt-2 text-xs font-semibold text-amber-300">View published →</p>
-          </Link>
-          <Link href="/instructor/courses?status=pending" className="glass lift block p-5 text-white">
-            <p className="text-sm text-white/70"><span className="mr-2 inline-block h-2 w-2 rounded-full bg-amber-300" />Pending review</p>
-            <p className="mt-1 text-3xl font-extrabold">{pending}</p>
-            <p className="mt-2 text-xs font-semibold text-amber-300">View pending →</p>
-          </Link>
-        </section>
+        {/* 2. 3 Stat Cards in a row (PDF Page 5) */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              My Courses
+            </p>
+            <p className="mt-3 text-4xl font-black text-blue-600">
+              {list.length}
+            </p>
+          </div>
 
-        <section aria-label="Recent courses">
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-xl font-bold">Your courses</h2>
-            <Link href="/instructor/courses" className="flex items-center gap-1 text-sm font-semibold text-amber-300">
-              View all <ArrowRight size={14} />
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              Total Students
+            </p>
+            <p className="mt-3 text-4xl font-black text-slate-900">
+              {studentsCount}
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              Total Earnings
+            </p>
+            <p className="mt-3 text-4xl font-black text-blue-600">
+              $0
+            </p>
+          </div>
+        </div>
+
+        {/* 3. My Courses List (PDF Page 5) */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-slate-900">My Courses</h2>
+            <Link
+              href="/instructor/courses"
+              className="flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700"
+            >
+              <span>View All</span>
+              <ArrowRight size={14} />
             </Link>
           </div>
-          {list.length ? (
-            <div className="space-y-3">
-              {list.slice(0, 5).map((c) => (
-                <Link key={c.id} href={`/instructor/courses/${c.id}`} className="glass lift flex items-center justify-between gap-4 p-4 text-white">
-                  <div className="min-w-0">
-                    <h3 className="truncate font-bold">{c.title}</h3>
-                    <p className="text-sm text-white/70">{c.lessons} lessons · {c.students} students</p>
+
+          {list.length > 0 ? (
+            <div className="space-y-4">
+              {list.map((c) => (
+                <div
+                  key={c.id}
+                  className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-sm hover:shadow-md transition flex items-center justify-between gap-4"
+                >
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="grid h-12 w-12 place-items-center rounded-xl bg-blue-50 text-blue-600 font-bold shrink-0">
+                      <BookOpen size={22} />
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-slate-900 text-base truncate">
+                        {c.title}
+                      </h3>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        {c.students} Students • {c.lessons} Lessons
+                      </p>
+                    </div>
                   </div>
-                  <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold capitalize ${badge[c.status] ?? badge.draft}`}>{c.status}</span>
-                </Link>
+
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-bold capitalize ${
+                        badgeTone[c.status] ?? "bg-slate-100 text-slate-700"
+                      }`}
+                    >
+                      {c.status}
+                    </span>
+                    <Link
+                      href={`/instructor/courses/${c.id}`}
+                      className="inline-flex items-center gap-1 rounded-xl bg-blue-50 px-4 py-2 text-xs font-bold text-blue-700 hover:bg-blue-600 hover:text-white transition"
+                    >
+                      <span>Manage</span>
+                      <ArrowRight size={13} />
+                    </Link>
+                  </div>
+                </div>
               ))}
             </div>
           ) : (
-            <p className="glass p-8 text-center text-white/70">No courses yet. Click “Create course” to start.</p>
+            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
+              <BookOpen size={36} className="mx-auto text-slate-300 mb-3" />
+              <h3 className="text-base font-bold text-slate-800">No courses created yet</h3>
+              <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                Ready to share your knowledge? Create your first course in minutes.
+              </p>
+              <Link
+                href="/instructor/courses/create"
+                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-2.5 text-xs font-bold text-white shadow-md shadow-blue-600/20 hover:bg-blue-700"
+              >
+                <Plus size={14} />
+                <span>Create Course</span>
+              </Link>
+            </div>
           )}
-        </section>
+        </div>
       </div>
     </GlassShell>
   );

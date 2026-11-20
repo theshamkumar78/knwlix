@@ -1,26 +1,46 @@
+import { ShieldCheck, ShieldX } from "lucide-react";
 import { requireRole } from "@/lib/auth";
-import { setUserRole } from "../actions";
+import { setUserRole, toggleUserActive } from "../actions";
 import GlassShell from "@/components/dashboard/GlassShell";
 
-const badge: Record<string, string> = {
-  draft: "bg-white/15 text-white/80",
-  pending: "bg-amber-400/20 text-amber-200",
-  published: "bg-emerald-400/20 text-emerald-200",
-  rejected: "bg-rose-400/20 text-rose-200",
+const badgeTone: Record<string, string> = {
+  draft: "bg-slate-100 text-slate-700",
+  pending: "bg-amber-100 text-amber-800",
+  published: "bg-emerald-100 text-emerald-800",
+  rejected: "bg-rose-100 text-rose-800",
 };
+
 const fmt = (d: string) =>
-  new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Karachi" });
+  new Date(d).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 
 export default async function Instructors() {
   const { sb } = await requireRole(["admin"]);
 
-  const { data: instr } = await sb
+  let { data: instr, error: instrErr } = await sb
     .from("profiles")
-    .select("id, full_name, created_at")
+    .select("id, full_name, created_at, is_active")
     .eq("role", "instructor")
     .order("created_at", { ascending: false });
-  const { data: courses } = await sb.from("courses").select("id, title, status, category, instructor_id");
-  const { data: enr } = await sb.from("enrollments").select("course_id, student_id");
+
+  // Fallback if migration 0005 has not been run yet
+  if (instrErr) {
+    const { data: fbInstr } = await sb
+      .from("profiles")
+      .select("id, full_name, created_at")
+      .eq("role", "instructor")
+      .order("created_at", { ascending: false });
+    instr = (fbInstr ?? []) as any;
+  }
+  const { data: courses } = await sb
+    .from("courses")
+    .select("id, title, status, category, instructor_id");
+  const { data: enr } = await sb
+    .from("enrollments")
+    .select("course_id, student_id");
 
   const rows = (instr ?? []).map((t: any) => {
     const mine = (courses ?? []).filter((c: any) => c.instructor_id === t.id);
@@ -28,10 +48,19 @@ export default async function Instructors() {
     const myEnr = (enr ?? []).filter((e: any) => mineIds.has(e.course_id));
     return {
       ...t,
-      subjects: Array.from(new Set(mine.map((c: any) => (c.category ?? "").trim()).filter(Boolean))) as string[],
+      subjects: Array.from(
+        new Set(
+          mine
+            .map((c: any) => (c.category ?? "").trim())
+            .filter(Boolean)
+        )
+      ) as string[],
       students: new Set(myEnr.map((e: any) => e.student_id)).size,
       published: mine.filter((c: any) => c.status === "published").length,
-      list: mine.map((c: any) => ({ ...c, students: myEnr.filter((e: any) => e.course_id === c.id).length })),
+      list: mine.map((c: any) => ({
+        ...c,
+        students: myEnr.filter((e: any) => e.course_id === c.id).length,
+      })),
     };
   });
 
@@ -39,68 +68,115 @@ export default async function Instructors() {
     <GlassShell active="instructors" variant="admin">
       <div className="space-y-6">
         <header>
-          <p className="text-sm text-white/70">Knowlix · Admin</p>
-          <h1 className="mt-1 text-3xl font-extrabold">Instructors</h1>
-          <p className="mt-1 text-white/70">{rows.length} instructor{rows.length === 1 ? "" : "s"}</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Instructors</h1>
+          <p className="mt-1 text-sm text-slate-500">
+            {rows.length} instructor{rows.length === 1 ? "" : "s"} on the platform
+          </p>
         </header>
 
         {rows.length ? (
           rows.map((t: any) => {
-            const name = t.full_name ?? `Instructor ${String(t.id).slice(0, 6)}`;
+            const name =
+              t.full_name ?? `Instructor ${String(t.id).slice(0, 6)}`;
+            const isActive = t.is_active !== false;
+
             return (
-              <article key={t.id} className="glass p-6">
+              <article key={t.id} className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <span className="grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-teal-400 to-violet text-lg font-bold">
+                    <span className="grid h-12 w-12 place-items-center rounded-2xl bg-blue-600 text-lg font-bold text-white shadow-md shadow-blue-600/20">
                       {name.charAt(0).toUpperCase()}
                     </span>
                     <div>
-                      <h2 className="text-lg font-bold">{name}</h2>
-                      <p className="text-xs text-white/50">Joined {fmt(t.created_at)}</p>
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-base font-bold text-slate-900">{name}</h2>
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
+                            isActive
+                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                              : "bg-rose-50 text-rose-700 border border-rose-200"
+                          }`}
+                        >
+                          {isActive ? (
+                            <>
+                              <ShieldCheck size={11} /> Active
+                            </>
+                          ) : (
+                            <>
+                              <ShieldX size={11} /> Deactivated
+                            </>
+                          )}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400">
+                        Joined {fmt(t.created_at)}
+                      </p>
                     </div>
                   </div>
-                  <form action={setUserRole.bind(null, t.id, "student")}>
-                    <button className="rounded-full bg-white/15 px-4 py-2 text-sm font-semibold transition hover:bg-white/25">Make student</button>
-                  </form>
+
+                  <div className="flex items-center gap-2">
+                    <form
+                      action={toggleUserActive.bind(null, t.id, !isActive)}
+                    >
+                      <button
+                        type="submit"
+                        className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                          isActive
+                            ? "border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100"
+                            : "border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                        }`}
+                      >
+                        {isActive ? "Deactivate" : "Activate"}
+                      </button>
+                    </form>
+
+                    <form action={setUserRole.bind(null, t.id, "student")}>
+                      <button className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition">
+                        Make Student
+                      </button>
+                    </form>
+                  </div>
                 </div>
 
                 <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                  <div className="rounded-2xl bg-white/5 p-4"><p className="text-xs text-white/60">Courses created</p><p className="text-2xl font-extrabold">{t.list.length}</p></div>
-                  <div className="rounded-2xl bg-white/5 p-4"><p className="text-xs text-white/60">Published</p><p className="text-2xl font-extrabold">{t.published}</p></div>
-                  <div className="rounded-2xl bg-white/5 p-4"><p className="text-xs text-white/60">Students enrolled</p><p className="text-2xl font-extrabold">{t.students}</p></div>
-                </div>
-
-                <div className="mt-4">
-                  <p className="text-xs text-white/60">Subjects</p>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {t.subjects.length ? (
-                      t.subjects.map((s: string) => (
-                        <span key={s} className="rounded-full bg-violet/30 px-3 py-1 text-xs font-semibold">{s}</span>
-                      ))
-                    ) : (
-                      <span className="text-sm text-white/50">No subject yet</span>
-                    )}
+                  <div className="rounded-xl border border-slate-100 bg-slate-50 p-4">
+                    <p className="text-xs font-semibold text-slate-500">Courses created</p>
+                    <p className="text-2xl font-black text-slate-900 mt-1">{t.list.length}</p>
+                  </div>
+                  <div className="rounded-xl border border-slate-100 bg-slate-50 p-4">
+                    <p className="text-xs font-semibold text-slate-500">Published</p>
+                    <p className="text-2xl font-black text-blue-600 mt-1">{t.published}</p>
+                  </div>
+                  <div className="rounded-xl border border-slate-100 bg-slate-50 p-4">
+                    <p className="text-xs font-semibold text-slate-500">Students enrolled</p>
+                    <p className="text-2xl font-black text-slate-900 mt-1">{t.students}</p>
                   </div>
                 </div>
 
-                {t.list.length > 0 && (
-                  <ul className="mt-4 space-y-2">
-                    {t.list.map((c: any) => (
-                      <li key={c.id} className="flex items-center justify-between gap-3 rounded-2xl bg-white/5 px-4 py-3">
-                        <span className="min-w-0 truncate font-medium">{c.title}</span>
-                        <span className="flex shrink-0 items-center gap-3 text-sm text-white/70">
-                          {c.students} student{c.students === 1 ? "" : "s"}
-                          <span className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${badge[c.status] ?? badge.draft}`}>{c.status}</span>
+                <div className="mt-4">
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Subjects</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {t.subjects.length ? (
+                      t.subjects.map((s: string) => (
+                        <span
+                          key={s}
+                          className="rounded-lg bg-blue-50 border border-blue-100 px-3 py-1 text-xs font-semibold text-blue-700"
+                        >
+                          {s}
                         </span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                      ))
+                    ) : (
+                      <span className="text-xs text-slate-400">None yet</span>
+                    )}
+                  </div>
+                </div>
               </article>
             );
           })
         ) : (
-          <p className="glass p-10 text-center text-white/70">No instructors yet.</p>
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500">
+            No instructors found.
+          </div>
         )}
       </div>
     </GlassShell>

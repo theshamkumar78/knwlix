@@ -1,26 +1,44 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowRight } from "lucide-react";
+import Image from "next/image";
+import {
+  ArrowRight,
+  Award,
+  BookOpen,
+  CheckCircle2,
+  ExternalLink,
+  GraduationCap,
+  Sparkles,
+  TrendingUp,
+  User,
+} from "lucide-react";
 import { requireRole } from "@/lib/auth";
 import GlassShell from "@/components/dashboard/GlassShell";
-import ProgressRing from "@/components/dashboard/ProgressRing";
 
-const tones = ["#5eead4", "#fbbf24", "#f472b6", "#a78bfa", "#38bdf8"];
+const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export default async function Dashboard() {
-  const { sb, user, profile } = await requireRole(["student", "instructor", "admin"]);
+  const { sb, user, profile } = await requireRole([
+    "student",
+    "instructor",
+    "admin",
+  ]);
   if (profile.role === "instructor") redirect("/instructor");
   if (profile.role === "admin") redirect("/admin");
 
   const { data: enr } = await sb
     .from("enrollments")
-    .select("course_id, enrolled_at, courses(title, slug)")
+    .select("course_id, enrolled_at, courses(title, slug, thumbnail_url, category)")
     .eq("student_id", user.id)
     .order("enrolled_at", { ascending: false });
   const ids = (enr ?? []).map((e: any) => e.course_id);
 
   const { data: lessons } = ids.length
-    ? await sb.from("lessons").select("id, course_id, title, order_index").in("course_id", ids).order("order_index")
+    ? await sb
+        .from("lessons")
+        .select("id, course_id, title, order_index")
+        .in("course_id", ids)
+        .order("order_index")
     : { data: [] as any[] };
   const { data: prog } = await sb
     .from("lesson_progress")
@@ -28,115 +46,283 @@ export default async function Dashboard() {
     .eq("student_id", user.id)
     .eq("completed", true);
 
+  // Fetch issued certificates for this student
+  const { data: certs } = await sb
+    .from("certificates")
+    .select("id, code, issued_at, course_id, courses(title)")
+    .eq("student_id", user.id)
+    .order("issued_at", { ascending: false });
+
   const doneSet = new Set((prog ?? []).map((p: any) => p.lesson_id));
 
-  const courses = (enr ?? []).map((e: any, i: number) => {
+  const courses = (enr ?? []).map((e: any) => {
     const ls = (lessons ?? []).filter((l: any) => l.course_id === e.course_id);
     const done = ls.filter((l: any) => doneSet.has(l.id)).length;
-    const pct = ls.length ? Math.round((done * 100) / ls.length) : 0;
+    const total = ls.length || 10;
+    const pct = Math.min(100, Math.round((done * 100) / total));
     const next = ls.find((l: any) => !doneSet.has(l.id));
-    const last =
-      (prog ?? [])
-        .filter((p: any) => p.course_id === e.course_id)
-        .map((p: any) => p.completed_at ?? "")
-        .sort()
-        .pop() ?? "";
-    return { id: e.course_id as string, title: (e.courses?.title ?? "Course") as string, total: ls.length, done, pct, next, last: last as string, tone: tones[i % tones.length] };
+    return {
+      id: e.course_id as string,
+      title: (e.courses?.title ?? "Course") as string,
+      slug: (e.courses?.slug ?? "") as string,
+      thumbnail: (e.courses?.thumbnail_url ?? "/images/category-banners.jpeg") as string,
+      category: (e.courses?.category ?? "General") as string,
+      total,
+      done,
+      pct,
+      next,
+    };
   });
 
-  const resume = courses.filter((c) => c.next).sort((a, b) => b.last.localeCompare(a.last))[0];
   const totalLessons = courses.reduce((s, c) => s + c.total, 0);
   const totalDone = courses.reduce((s, c) => s + c.done, 0);
-  const overall = totalLessons ? Math.round((totalDone * 100) / totalLessons) : 0;
 
+  // 7-day activity data
   const days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - (6 - i));
     return d.toISOString().slice(0, 10);
   });
-  const counts = days.map((d) => (prog ?? []).filter((p: any) => p.completed_at?.slice(0, 10) === d).length);
-  const weekTotal = counts.reduce((a, b) => a + b, 0);
+  const counts = days.map(
+    (d) =>
+      (prog ?? []).filter((p: any) => p.completed_at?.slice(0, 10) === d)
+        .length
+  );
   const max = Math.max(1, ...counts);
+  const weekTotal = counts.reduce((a, b) => a + b, 0);
 
-  const name = profile.full_name ?? user.email?.split("@")[0] ?? "learner";
-  const left = resume ? resume.total - resume.done : 0;
+  const name = profile.full_name ?? user.email?.split("@")[0] ?? "Sham";
 
   return (
-    <GlassShell active="home">
-      <div className="space-y-5">
-        <header>
-          <p className="text-sm text-white/70">Knowlix · Student</p>
-          <h1 className="mt-1 text-3xl font-extrabold md:text-4xl">Welcome back, {name}</h1>
-        </header>
-
-        <section className="glass relative overflow-hidden p-7 md:flex md:items-center md:justify-between md:gap-6">
-          <div className="pointer-events-none absolute -right-16 -top-16 h-60 w-60 rounded-full bg-violet/40 blur-3xl" />
-          <div className="relative">
-            <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">
-              {resume ? "Continue where you left off" : courses.length ? "All caught up" : "Get started"}
-            </span>
-            <h2 className="mt-4 text-3xl font-extrabold">
-              {resume ? resume.title : courses.length ? "You finished every lesson" : "Start your first course"}
-            </h2>
-            <p className="mt-2 max-w-md text-white/70">
-              {resume
-                ? `Next lesson: ${resume.next.title}. ${left} lesson${left === 1 ? "" : "s"} to go.`
-                : courses.length
-                  ? "Browse more courses to keep learning."
-                  : "Browse courses and enroll to see your progress here."}
+    <GlassShell active="home" variant="student">
+      <div className="space-y-8">
+        {/* 1. Header (PDF Page 4) */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+              Welcome back, {name}! 👋
+            </h1>
+            <p className="mt-1 text-sm text-slate-500">
+              Keep learning and achieve your goals.
             </p>
+          </div>
+
+          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-blue-600 text-white font-bold shadow-md shadow-blue-600/20">
+            {name.charAt(0).toUpperCase()}
+          </div>
+        </div>
+
+        {/* 2. 3 Stat Cards in a row (PDF Page 4) */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              Enrolled Courses
+            </p>
+            <p className="mt-3 text-4xl font-black text-blue-600">
+              {courses.length}
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              Completed Lessons
+            </p>
+            <p className="mt-3 text-4xl font-black text-slate-900">
+              {totalDone}
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              Certificates
+            </p>
+            <p className="mt-3 text-4xl font-black text-slate-900">
+              {certs?.length ?? 0}
+            </p>
+          </div>
+        </div>
+
+        {/* 3. Weekly Learning Activity Graph (PDF & User Request 7) */}
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">Weekly Learning Activity</h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                {weekTotal} lessons completed in the last 7 days
+              </p>
+            </div>
+            <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-600">
+              This Week
+            </span>
+          </div>
+
+          <div className="flex items-end justify-between gap-3 h-40 pt-4 px-2">
+            {counts.map((n, i) => {
+              const heightPct = Math.max((n / max) * 100, 10);
+              const isToday = i === 6;
+              return (
+                <div key={i} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
+                  <div className="w-full flex justify-center items-end h-full">
+                    <div
+                      className={`w-full max-w-[40px] rounded-xl transition-all duration-300 ${
+                        isToday || n > 0
+                          ? "bg-gradient-to-t from-blue-600 to-indigo-500 shadow-sm shadow-blue-500/20 group-hover:from-blue-700 group-hover:to-indigo-600"
+                          : "bg-slate-100 group-hover:bg-slate-200"
+                      }`}
+                      style={{ height: `${heightPct}%` }}
+                    />
+                  </div>
+                  <span className={`text-xs font-semibold ${isToday ? "text-blue-600 font-bold" : "text-slate-400"}`}>
+                    {dayLabels[i]}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 4. My Courses Section (PDF Page 4) */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-slate-900">My Courses</h2>
             <Link
-              href={resume ? `/dashboard/courses#c-${resume.id}` : "/courses"}
-              className="mt-6 inline-flex items-center gap-2 rounded-full bg-amber-400 px-6 py-3 text-sm font-bold text-amber-950 transition hover:-translate-y-0.5"
+              href="/dashboard/courses"
+              className="flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700"
             >
-              {resume ? "Resume lesson" : "Browse courses"} <ArrowRight size={16} />
+              <span>View All</span>
+              <ArrowRight size={14} />
             </Link>
           </div>
-          <div className="relative mt-6 shrink-0 text-center md:mt-0">
-            <ProgressRing pct={overall} size={150} stroke={12} gradient />
-            <p className="mt-2 text-xs text-white/70">Overall progress</p>
-          </div>
-        </section>
 
-        <section aria-label="Your stats" className="grid gap-4 sm:grid-cols-3">
-          <div className="glass lift p-5">
-            <p className="text-sm text-white/70"><span className="mr-2 inline-block h-2 w-2 rounded-full bg-teal-300" />Enrolled courses</p>
-            <p className="mt-1 text-3xl font-extrabold">{courses.length}</p>
-          </div>
-          <div className="glass lift p-5">
-            <p className="text-sm text-white/70"><span className="mr-2 inline-block h-2 w-2 rounded-full bg-amber-300" />Lessons completed</p>
-            <p className="mt-1 text-3xl font-extrabold">{totalDone}</p>
-          </div>
-          <div className="glass lift p-5">
-            <p className="text-sm text-white/70"><span className="mr-2 inline-block h-2 w-2 rounded-full bg-pink-400" />This week · {weekTotal}</p>
-            <div className="mt-3 flex h-[70px] items-end gap-2" aria-hidden="true">
-              {counts.map((n, i) => (
-                <i key={i} className="flex-1 rounded-md bg-gradient-to-b from-teal-300 to-violet" style={{ height: `${Math.max((n / max) * 100, 8)}%`, opacity: n ? 1 : 0.35 }} />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section aria-label="My courses">
-          <h2 className="mb-3 text-xl font-bold">My courses</h2>
-          {courses.length ? (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {courses.length > 0 ? (
+            <div className="space-y-4">
               {courses.map((c) => (
-                <Link key={c.id} href={`/dashboard/courses#c-${c.id}`} className="glass lift flex items-center gap-4 p-5 text-white">
-                  <ProgressRing pct={c.pct} size={64} stroke={6} color={c.tone} />
-                  <div className="min-w-0">
-                    <h3 className="truncate font-bold">{c.title}</h3>
-                    <p className="text-sm text-white/70">{c.done} of {c.total} lessons</p>
+                <div
+                  key={c.id}
+                  className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-sm hover:shadow-md transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
+                >
+                  <div className="flex items-center gap-5 min-w-0">
+                    <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-xl bg-slate-100 shadow-xs">
+                      <Image
+                        src={c.thumbnail}
+                        alt={c.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">
+                        {c.category}
+                      </span>
+                      <h3 className="font-bold text-slate-900 text-base truncate">
+                        {c.title}
+                      </h3>
+                      <p className="text-xs text-slate-500 mt-1">
+                        {c.done} of {c.total} lessons completed
+                      </p>
+
+                      {/* Progress Bar (PDF Page 4) */}
+                      <div className="mt-3 flex items-center gap-3 w-48 sm:w-64">
+                        <div className="h-2 flex-1 rounded-full bg-slate-100 overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-blue-600 transition-all duration-500"
+                            style={{ width: `${c.pct}%` }}
+                          />
+                        </div>
+                        <span className="text-xs font-bold text-slate-700">
+                          {c.pct}%
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                </Link>
+
+                  <Link
+                    href={`/dashboard/courses#c-${c.id}`}
+                    className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-blue-600 px-6 py-2.5 text-xs font-bold text-white shadow-md shadow-blue-600/20 hover:bg-blue-700 transition"
+                  >
+                    <span>Continue Learning</span>
+                    <ArrowRight size={14} />
+                  </Link>
+                </div>
               ))}
             </div>
           ) : (
-            <p className="glass p-8 text-center text-white/70">
-              You have not enrolled in any course yet. <Link href="/courses" className="font-semibold text-amber-300 underline">Browse courses</Link>
-            </p>
+            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
+              <BookOpen size={36} className="mx-auto text-slate-300 mb-3" />
+              <h3 className="text-base font-bold text-slate-800">No enrolled courses yet</h3>
+              <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                Explore our catalog of university-grade courses and start learning today.
+              </p>
+              <Link
+                href="/courses"
+                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-2.5 text-xs font-bold text-white shadow-md shadow-blue-600/20 hover:bg-blue-700"
+              >
+                <span>Browse Courses</span>
+                <ArrowRight size={14} />
+              </Link>
+            </div>
           )}
-        </section>
+        </div>
+
+        {/* 5. Certificates Section */}
+        {certs && certs.length > 0 && (
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-slate-900">Your Certificates</h2>
+              <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
+                {certs.length} Earned
+              </span>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {certs.map((c: any) => (
+                <div
+                  key={c.id}
+                  className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">
+                        <Award size={13} /> Certified
+                      </span>
+                      <span className="font-mono text-xs text-slate-400">
+                        {c.code}
+                      </span>
+                    </div>
+
+                    <h3 className="font-bold text-slate-900 mt-3 line-clamp-1">
+                      {(c.courses as any)?.title ?? "Completed Course"}
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Issued on{" "}
+                      {new Date(c.issued_at).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
+
+                  <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-3 text-xs">
+                    <Link
+                      href={`/dashboard/certificate/${c.course_id}`}
+                      className="font-bold text-blue-600 hover:text-blue-700"
+                    >
+                      View Certificate →
+                    </Link>
+                    <Link
+                      href={`/verify/${c.code}`}
+                      target="_blank"
+                      className="text-slate-400 hover:text-slate-600 inline-flex items-center gap-1"
+                    >
+                      Verify <ExternalLink size={10} />
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </GlassShell>
   );

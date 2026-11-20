@@ -98,7 +98,7 @@ export default async function StudentDetailView({
         <h2 className="text-xl font-bold">{instructorId ? "Enrolled in your courses" : "Enrolled courses"}</h2>
         {rows.length ? (
           <ul className="mt-4 space-y-3">
-            {rows.map((r) => (
+            {rows.map((r: any) => (
               <li key={r.key} className="grid items-center gap-3 rounded-2xl bg-white/5 p-4 md:grid-cols-[1.5fr_1.2fr_1.2fr]">
                 <span className="truncate font-medium">{r.title}</span>
                 <div>
