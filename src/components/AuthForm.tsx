@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { GraduationCap, BookOpen, Check, X, Shield, Chrome, Github } from "lucide-react";
+import { GraduationCap, BookOpen, Check, X, Shield } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import PasswordInput from "@/components/ui/PasswordInput";
 
@@ -332,36 +332,6 @@ export default function AuthForm({
                 </div>
               )}
 
-              {/* Social Login Section (PDF Page 7) */}
-              {mode !== "forgot" && (
-                <div className="pt-4">
-                  <div className="relative text-center text-xs text-slate-400 mb-4">
-                    <span className="bg-white dark:bg-slate-800 px-2 relative z-10 font-medium">
-                      or continue with
-                    </span>
-                    <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 border-t border-slate-200 dark:border-slate-700" />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      type="button"
-                      onClick={() => alert("Social Google login is configured via Supabase Auth.")}
-                      className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
-                    >
-                      <Chrome size={16} className="text-rose-500" />
-                      <span>Google</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => alert("Social GitHub login is configured via Supabase Auth.")}
-                      className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
-                    >
-                      <Github size={16} className="text-slate-900 dark:text-white" />
-                      <span>GitHub</span>
-                    </button>
-                  </div>
-                </div>
-              )}
             </form>
           </div>
         </div>
