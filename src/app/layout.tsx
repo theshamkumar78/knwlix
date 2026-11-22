@@ -1,16 +1,11 @@
+
 import type { Metadata } from "next";
 import "./globals.css";
-import { Plus_Jakarta_Sans } from "next/font/google";
+
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { ToastProvider } from "@/components/ui/Toast";
 import FormGuard from "@/components/FormGuard";
-
-const font = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "Knowlix — Learn. Explore. Achieve.",
@@ -21,7 +16,11 @@ export const metadata: Metadata = {
 const themeScript = `
   try {
     const s = localStorage.getItem('knowlix-theme');
-    if (s === 'dark' || (!s && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+
+    if (
+      s === 'dark' ||
+      (!s && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
@@ -39,11 +38,16 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className={`${font.className} flex min-h-screen flex-col antialiased bg-[#f8fafc] text-slate-900 dark:bg-[#0b1329] dark:text-slate-100 transition-colors duration-200`}>
+
+      <body className="font-sans flex min-h-screen flex-col antialiased bg-[#f8fafc] text-slate-900 dark:bg-[#0b1329] dark:text-slate-100 transition-colors duration-200">
         <ToastProvider>
           <FormGuard />
           <Navbar />
-          <main className="flex-1">{children}</main>
+
+          <main className="flex-1">
+            {children}
+          </main>
+
           <Footer />
         </ToastProvider>
       </body>
