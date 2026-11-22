@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Users, GraduationCap, ShieldCheck, ArrowRight, Laptop, Award, BookOpen } from "lucide-react";
+import { Users, GraduationCap, ShieldCheck, ArrowRight } from "lucide-react";
 
 export default function AboutPage() {
   const values = [
@@ -7,46 +7,47 @@ export default function AboutPage() {
       icon: Users,
       title: "Expert Instructors",
       description: "Learn from vetted academic educators and top industry professionals.",
-      color: "bg-blue-50 text-blue-600 border-blue-100",
+      color: "bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-950/60 dark:text-blue-400 dark:border-blue-900/40",
     },
     {
       icon: GraduationCap,
       title: "Flexible Learning",
       description: "Learn at your own pace anytime, anywhere with lifetime access to all modules.",
-      color: "bg-indigo-50 text-indigo-600 border-indigo-100",
+      color: "bg-indigo-50 text-indigo-600 border-indigo-100 dark:bg-indigo-950/60 dark:text-indigo-400 dark:border-indigo-900/40",
     },
     {
       icon: ShieldCheck,
       title: "Lifetime Access",
       description: "Keep complete lifetime access to curriculum updates, code assets, and notes.",
-      color: "bg-emerald-50 text-emerald-600 border-emerald-100",
+      color: "bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-900/40",
     },
   ];
 
   return (
-    <main className="min-h-screen bg-[#f8fafc] text-slate-900 pb-20">
-      {/* 1. Hero Card matching PDF Page 8 */}
+    <main className="min-h-screen bg-[#f8fafc] text-slate-900 pb-20 dark:bg-[#0b1329] dark:text-slate-100 transition-colors">
+      {/* 1. Hero Card */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-8">
-        <div className="rounded-3xl border border-blue-100 bg-gradient-to-br from-[#eef5ff] via-[#f4f8ff] to-[#e8f1fd] p-8 sm:p-12 lg:p-16 shadow-sm">
+        <div className="rounded-3xl border border-blue-100 bg-gradient-to-br from-[#eef5ff] via-[#f4f8ff] to-[#e8f1fd] p-8 sm:p-12 lg:p-16 shadow-sm dark:border-slate-800 dark:bg-gradient-to-br dark:from-slate-900 dark:via-blue-950/40 dark:to-slate-900">
           <div className="grid items-center gap-10 lg:grid-cols-12">
             {/* Left Content Column */}
             <div className="lg:col-span-7">
-              <span className="rounded-full bg-blue-100 px-3.5 py-1 text-xs font-bold text-blue-700">
+              <span className="rounded-full bg-blue-100 px-3.5 py-1 text-xs font-bold text-blue-700 dark:bg-blue-950/60 dark:text-blue-300">
                 About Knowlix
               </span>
 
-              <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-tight">
+              <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
                 About Knowlix <br />
-                <span className="text-blue-600">Empowering learners worldwide</span>
+                <span className="text-blue-600 dark:text-blue-400">Empowering learners worldwide</span>
               </h1>
 
-              <p className="mt-4 text-base sm:text-lg text-slate-600 max-w-xl leading-relaxed">
+              <p className="mt-4 text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
                 Knowlix is a modern online learning platform dedicated to providing high-quality education, expert-led courses, and flexible learning opportunities for everyone.
               </p>
 
-              <div className="mt-8 flex items-center gap-4">
+              <div className="mt-8 flex flex-wrap items-center gap-4">
                 <Link
                   href="/courses"
+                  prefetch={true}
                   className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-8 py-3.5 text-sm font-bold text-white shadow-md shadow-blue-600/25 transition hover:bg-blue-700"
                 >
                   <span>Explore Courses</span>
@@ -54,7 +55,8 @@ export default function AboutPage() {
                 </Link>
                 <Link
                   href="/contact"
-                  className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-7 py-3.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition"
+                  prefetch={true}
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-7 py-3.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
                 >
                   <span>Contact Us</span>
                 </Link>
@@ -63,7 +65,7 @@ export default function AboutPage() {
 
             {/* Right Laptop Illustration Graphic */}
             <div className="lg:col-span-5 flex justify-center">
-              <div className="relative w-full max-w-sm rounded-3xl border border-white/80 bg-white/70 p-5 shadow-xl shadow-blue-500/10 backdrop-blur-md">
+              <div className="relative w-full max-w-sm rounded-3xl border border-white/80 bg-white/70 p-5 shadow-xl shadow-blue-500/10 backdrop-blur-md dark:border-slate-700 dark:bg-slate-800/70">
                 <div className="relative aspect-video w-full rounded-2xl bg-gradient-to-tr from-slate-900 via-blue-900 to-indigo-900 p-6 flex flex-col items-center justify-center text-center shadow-inner">
                   <div className="grid h-16 w-16 place-items-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-600/30">
                     <GraduationCap size={36} />
@@ -81,7 +83,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 2. 3 Value Cards matching PDF Page 8 */}
+      {/* 2. 3 Value Cards */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid gap-6 sm:grid-cols-3">
           {values.map((v) => {
@@ -89,15 +91,15 @@ export default function AboutPage() {
             return (
               <div
                 key={v.title}
-                className="rounded-2xl border border-slate-200/80 bg-white p-7 shadow-sm hover:shadow-md transition text-center sm:text-left"
+                className="rounded-2xl border border-slate-200/80 bg-white p-7 shadow-sm hover:shadow-md transition text-center sm:text-left dark:border-slate-800 dark:bg-slate-800/90"
               >
                 <div className={`grid h-14 w-14 place-items-center rounded-2xl border ${v.color}`}>
                   <Icon size={26} />
                 </div>
-                <h3 className="mt-5 text-lg font-bold text-slate-900">
+                <h3 className="mt-5 text-lg font-bold text-slate-900 dark:text-white">
                   {v.title}
                 </h3>
-                <p className="mt-2 text-sm text-slate-500 leading-relaxed">
+                <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
                   {v.description}
                 </p>
               </div>

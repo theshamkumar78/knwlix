@@ -1,167 +1,122 @@
 "use client";
 
-import { useState } from "react";
-import { Mail, Phone, MapPin, Send, CheckCircle2 } from "lucide-react";
+import { useState, useTransition } from "react";
+import { Mail, Phone, MapPin, Send, CheckCircle2, Clock } from "lucide-react";
+import { SITE } from "@/lib/site";
+import { sendContactMessage } from "./actions";
+
+const input =
+  "w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800/80 dark:text-white dark:placeholder-slate-500 dark:focus:border-blue-400 dark:focus:bg-slate-800";
+const label = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300";
+
+type Info = { icon: any; title: string; value: string; href?: string };
 
 export default function ContactPage() {
-  const [submitted, setSubmitted] = useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  const [pending, start] = useTransition();
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const info: Info[] = [
+    ...(SITE.email ? [{ icon: Mail, title: "Email", value: SITE.email, href: `mailto:${SITE.email}` }] : []),
+    ...(SITE.phone ? [{ icon: Phone, title: "Phone", value: SITE.phone, href: `tel:${SITE.phone.replace(/\s/g, "")}` }] : []),
+    ...(SITE.location ? [{ icon: MapPin, title: "Location", value: SITE.location }] : []),
+    { icon: Clock, title: "Response time", value: "We reply within 1–2 working days." },
+  ];
+
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitted(true);
-  };
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+    setError("");
+    start(async () => {
+      const res = await sendContactMessage(fd);
+      if (res.ok) {
+        setSent(true);
+        form.reset();
+      } else {
+        setError(res.error ?? "Something went wrong. Please try again.");
+      }
+    });
+  }
 
   return (
-    <main className="min-h-screen bg-[#f8fafc] text-slate-900 pb-20 pt-8 sm:pt-12">
+    <main className="min-h-screen bg-[#f8fafc] pb-20 pt-8 text-slate-900 sm:pt-12 dark:bg-[#0b1329] dark:text-slate-100 transition-colors">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-12 items-start">
-          {/* Left Column: Contact Information Cards (PDF Page 9) */}
-          <div className="lg:col-span-5 space-y-6">
+        <div className="grid items-start gap-10 lg:grid-cols-12">
+          <div className="space-y-6 lg:col-span-5">
             <div>
-              <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900">
-                Get In Touch
-              </h1>
-              <p className="mt-2 text-sm sm:text-base text-slate-500">
-                We'd love to hear from you! Reach out for support or feedback.
+              <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">Get in touch</h1>
+              <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 sm:text-base">
+                Have questions about our courses or learning platform? Send us a message and our team will help you.
               </p>
             </div>
-
             <div className="space-y-4 pt-2">
-              {/* Email Card */}
-              <div className="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-                <div className="grid h-12 w-12 place-items-center rounded-xl bg-blue-50 text-blue-600 shrink-0">
-                  <Mail size={22} />
+              {info.map(({ icon: Icon, title, value, href }) => (
+                <div key={title} className="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-800/90">
+                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+                    <Icon size={22} />
+                  </div>
+                  <div className="min-w-0">
+                    <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400">{title}</h2>
+                    {href ? (
+                      <a href={href} className="break-all text-sm font-bold text-slate-900 dark:text-white transition hover:text-blue-600 dark:hover:text-blue-400">{value}</a>
+                    ) : (
+                      <p className="text-sm font-bold text-slate-900 dark:text-white">{value}</p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                    Email
-                  </h3>
-                  <a
-                    href="mailto:info@knowlix.com"
-                    className="text-sm font-bold text-slate-900 hover:text-blue-600 transition"
-                  >
-                    info@knowlix.com
-                  </a>
-                </div>
-              </div>
-
-              {/* Phone Card */}
-              <div className="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-                <div className="grid h-12 w-12 place-items-center rounded-xl bg-blue-50 text-blue-600 shrink-0">
-                  <Phone size={22} />
-                </div>
-                <div>
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                    Phone
-                  </h3>
-                  <a
-                    href="tel:+923001234567"
-                    className="text-sm font-bold text-slate-900 hover:text-blue-600 transition"
-                  >
-                    +92 300 123 4567
-                  </a>
-                </div>
-              </div>
-
-              {/* Address Card */}
-              <div className="flex items-center gap-4 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-                <div className="grid h-12 w-12 place-items-center rounded-xl bg-blue-50 text-blue-600 shrink-0">
-                  <MapPin size={22} />
-                </div>
-                <div>
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                    Address
-                  </h3>
-                  <p className="text-sm font-bold text-slate-900">
-                    123 Learning St, Education City
-                  </p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
-          {/* Right Column: Contact Message Form (PDF Page 9) */}
           <div className="lg:col-span-7">
-            <div className="relative rounded-3xl border border-slate-200/80 bg-white p-8 sm:p-10 shadow-xl shadow-blue-500/5">
-              {/* Paper airplane accent in top right */}
-              <div className="absolute right-8 top-8 grid h-10 w-10 place-items-center rounded-xl bg-blue-50 text-blue-600">
+            <div className="relative rounded-3xl border border-slate-200/80 bg-white p-8 shadow-xl shadow-blue-500/5 sm:p-10 dark:border-slate-800 dark:bg-slate-800/90">
+              <div className="absolute right-8 top-8 grid h-10 w-10 place-items-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                 <Send size={18} />
               </div>
+              <h2 className="mb-6 text-xl font-bold text-slate-900 dark:text-white">Send us a message</h2>
 
-              <h2 className="text-xl font-bold text-slate-900 mb-6">Send Us a Message</h2>
-
-              {submitted ? (
-                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
-                  <CheckCircle2 size={36} className="mx-auto text-emerald-600 mb-2" />
-                  <h3 className="text-base font-bold text-emerald-900">Message Delivered!</h3>
-                  <p className="text-xs text-emerald-700 mt-1">
-                    Thank you, {name || "learner"}! Our team will get back to you within 24 hours.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSubmitted(false);
-                      setName("");
-                      setEmail("");
-                      setMessage("");
-                    }}
-                    className="mt-4 inline-block text-xs font-bold text-emerald-800 underline"
-                  >
+              {sent ? (
+                <div role="status" className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
+                  <CheckCircle2 size={36} className="mx-auto mb-2 text-emerald-600" />
+                  <h3 className="text-base font-bold text-emerald-900">Message sent</h3>
+                  <p className="mt-1 text-xs text-emerald-700">Thank you! Our team will get back to you soon.</p>
+                  <button type="button" onClick={() => setSent(false)} className="mt-4 inline-block text-xs font-bold text-emerald-800 underline">
                     Send another message
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={onSubmit} className="space-y-4">
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                      Your Name
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="e.g. Sham Kumar"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
-                    />
+                    <label htmlFor="full_name" className={label}>Your name</label>
+                    <input id="full_name" name="full_name" required minLength={2} maxLength={100} className={input} />
+                  </div>
+                  <div>
+                    <label htmlFor="email" className={label}>Your email</label>
+                    <input id="email" name="email" type="email" required maxLength={200} placeholder="you@example.com" className={input} />
+                  </div>
+                  <div>
+                    <label htmlFor="subject" className={label}>Subject (optional)</label>
+                    <input id="subject" name="subject" maxLength={150} className={input} />
+                  </div>
+                  <div>
+                    <label htmlFor="message" className={label}>Your message</label>
+                    <textarea id="message" name="message" rows={5} required minLength={5} maxLength={2000} className={input} />
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                      Your Email
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@example.com"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
-                    />
+                  {/* spam bots ke liye jaal, insaan ko nazar nahi aata */}
+                  <div className="hidden" aria-hidden="true">
+                    <input name="company" tabIndex={-1} autoComplete="off" />
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                      Your Message
-                    </label>
-                    <textarea
-                      rows={5}
-                      required
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder="How can we help you with your learning goals?"
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
-                    />
-                  </div>
+                  {error && <p role="alert" className="rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>}
 
                   <button
                     type="submit"
-                    className="w-full rounded-xl bg-blue-600 py-3.5 text-sm font-bold text-white shadow-md shadow-blue-600/25 transition hover:bg-blue-700 active:scale-[0.98] flex items-center justify-center gap-2"
+                    disabled={pending}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3.5 text-sm font-bold text-white shadow-md shadow-blue-600/25 transition hover:bg-blue-700 active:scale-[0.98] disabled:cursor-wait disabled:opacity-60"
                   >
-                    <span>Send Message</span>
+                    <span>{pending ? "Sending…" : "Send message"}</span>
                     <Send size={15} />
                   </button>
                 </form>

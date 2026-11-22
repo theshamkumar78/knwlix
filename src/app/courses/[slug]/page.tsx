@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -18,6 +19,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { createClient, supabaseConfigured } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/session";
 import CourseReviewForm from "@/components/courses/CourseReviewForm";
 
 export default async function CourseDetail({
@@ -37,6 +39,7 @@ export default async function CourseDetail({
     );
 
   let courseQuery = sb.from("courses").select("*, profiles(full_name)");
+
   if (isUuid) {
     courseQuery = courseQuery.or(`slug.eq.${slug},id.eq.${slug}`);
   } else {
@@ -55,9 +58,9 @@ export default async function CourseDetail({
     .order("order_index");
 
   // 3. Auth user & enrollment status
-  const {
-    data: { user },
-  } = await sb.auth.getUser();
+  const { data: { user } } = {
+    data: { user: (await getCurrentUser()).user },
+  };
 
   const { data: enrolled } = user
     ? await sb
@@ -99,6 +102,7 @@ export default async function CourseDetail({
 
   // Group curriculum outline by module
   const modulesMap = new Map<string, typeof outline>();
+
   (outline ?? []).forEach((l) => {
     const mod = l.module_title?.trim() || "Course Lessons";
     const existing = modulesMap.get(mod) || [];
@@ -107,8 +111,8 @@ export default async function CourseDetail({
   });
 
   return (
-    <main className="min-h-screen bg-[#f8fafc] text-slate-900 pb-20">
-      {/* 1. Breadcrumbs (PDF Page 3) */}
+    <main className="min-h-screen bg-[#f8fafc] text-slate-900 dark:bg-[#0b1329] dark:text-slate-100 pb-20 transition-colors">
+      {/* 1. Breadcrumbs */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8 pb-4">
         <nav className="flex items-center gap-2 text-xs font-semibold text-slate-500">
           <Link href="/" className="hover:text-blue-600 transition">
@@ -125,11 +129,11 @@ export default async function CourseDetail({
         </nav>
       </div>
 
-      {/* 2. Top Hero Card (PDF Page 3) */}
+      {/* 2. Top Hero Card */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
-        <div className="rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 lg:p-10 shadow-sm">
+        <div className="rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 lg:p-10 shadow-sm dark:border-slate-800 dark:bg-slate-800/90">
           <div className="grid items-center gap-8 lg:grid-cols-12">
-            {/* Left: Video / Thumbnail with Play overlay */}
+            {/* Left: Video / Thumbnail */}
             <div className="lg:col-span-6">
               <div className="group relative aspect-video w-full overflow-hidden rounded-2xl bg-slate-900 shadow-md">
                 <Image
@@ -182,7 +186,7 @@ export default async function CourseDetail({
                 </div>
               </div>
 
-              {/* Action Buttons Row */}
+              {/* Action Buttons */}
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 {enrolled ? (
                   <Link
@@ -215,12 +219,12 @@ export default async function CourseDetail({
         </div>
       </section>
 
-      {/* 3. Main Content & Sidebar Layout (PDF Page 3) */}
+      {/* 3. Main Content & Sidebar Layout */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid gap-8 lg:grid-cols-12">
-          {/* Left Column (8 cols): Tabs & Details */}
+          {/* Left Column */}
           <div className="space-y-8 lg:col-span-8">
-            {/* Tab Navigation Strip */}
+            {/* Tab Navigation */}
             <div className="flex border-b border-slate-200">
               <a
                 href="#overview"
@@ -249,87 +253,110 @@ export default async function CourseDetail({
             </div>
 
             {/* About This Course */}
-            <section id="overview" className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
-              <h2 className="text-xl font-bold text-slate-900">About This Course</h2>
-              <p className="mt-3 whitespace-pre-line text-sm sm:text-base leading-relaxed text-slate-600">
+            <section
+              id="overview"
+              className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm dark:border-slate-800 dark:bg-slate-800/90"
+            >
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                About This Course
+              </h2>
+              <p className="mt-3 whitespace-pre-line text-sm sm:text-base leading-relaxed text-slate-600 dark:text-slate-300">
                 {course.description ||
                   "This course is designed for beginners and advanced learners who want to master real-world skills. You will learn through hands-on projects, high-definition video walkthroughs, and practical examples."}
               </p>
 
-              {/* What You Will Learn List */}
-              {course.what_you_will_learn && course.what_you_will_learn.length > 0 && (
-                <div className="mt-8 border-t border-slate-100 pt-6">
-                  <h3 className="text-base font-bold text-slate-900 mb-4">
-                    What You Will Learn
-                  </h3>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {course.what_you_will_learn.map((item: string, i: number) => (
-                      <div key={i} className="flex items-start gap-2.5">
-                        <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 mt-0.5" />
-                        <span className="text-sm text-slate-700 leading-snug">
-                          {item}
-                        </span>
-                      </div>
-                    ))}
+              {/* What You Will Learn */}
+              {course.what_you_will_learn &&
+                course.what_you_will_learn.length > 0 && (
+                  <div className="mt-8 border-t border-slate-100 pt-6 dark:border-slate-700">
+                    <h3 className="text-base font-bold text-slate-900 dark:text-white mb-4">
+                      What You Will Learn
+                    </h3>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {course.what_you_will_learn.map(
+                        (item: string, i: number) => (
+                          <div key={i} className="flex items-start gap-2.5">
+                            <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 mt-0.5" />
+                            <span className="text-sm text-slate-700 dark:text-slate-300 leading-snug">
+                              {item}
+                            </span>
+                          </div>
+                        )
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </section>
 
             {/* Course Curriculum */}
-            <section id="curriculum" className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
+            <section
+              id="curriculum"
+              className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm dark:border-slate-800 dark:bg-slate-800/90"
+            >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-slate-900">Course Curriculum</h2>
-                <span className="text-xs font-bold text-slate-500">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                  Course Curriculum
+                </h2>
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
                   {outline?.length ?? 0} Lessons Published
                 </span>
               </div>
 
               {outline && outline.length > 0 ? (
                 <div className="space-y-4">
-                  {Array.from(modulesMap.entries()).map(([moduleName, moduleLessons]) => (
-                    <div
-                      key={moduleName}
-                      className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-4"
-                    >
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3">
-                        {moduleName} ({moduleLessons?.length ?? 0} lessons)
-                      </h3>
-                      <ol className="space-y-2">
-                        {(moduleLessons ?? []).map((l, i) => (
-                          <li
-                            key={l.id}
-                            className="flex items-center justify-between rounded-lg bg-white p-3 border border-slate-100 shadow-xs text-sm"
-                          >
-                            <div className="flex items-center gap-3">
-                              <span className="grid h-6 w-6 place-items-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">
-                                {i + 1}
+                  {Array.from(modulesMap.entries()).map(
+                    ([moduleName, moduleLessons]) => (
+                      <div
+                        key={moduleName}
+                        className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-4"
+                      >
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-3">
+                          {moduleName} ({moduleLessons?.length ?? 0} lessons)
+                        </h3>
+                        <ol className="space-y-2">
+                          {(moduleLessons ?? []).map((l, i) => (
+                            <li
+                              key={l.id}
+                              className="flex items-center justify-between rounded-lg bg-white p-3 border border-slate-100 shadow-xs text-sm"
+                            >
+                              <div className="flex items-center gap-3">
+                                <span className="grid h-6 w-6 place-items-center rounded-full bg-blue-100 text-xs font-bold text-blue-600">
+                                  {i + 1}
+                                </span>
+                                <span className="font-semibold text-slate-800">
+                                  {l.title}
+                                </span>
+                              </div>
+                              <span className="text-xs text-slate-400">
+                                {l.duration_minutes
+                                  ? `${l.duration_minutes} min`
+                                  : "Video Lesson"}
                               </span>
-                              <span className="font-semibold text-slate-800">
-                                {l.title}
-                              </span>
-                            </div>
-                            <span className="text-xs text-slate-400">
-                              {l.duration_minutes ? `${l.duration_minutes} min` : "Video Lesson"}
-                            </span>
-                          </li>
-                        ))}
-                      </ol>
-                    </div>
-                  ))}
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+                    )
+                  )}
                 </div>
               ) : (
                 <div className="rounded-xl bg-slate-50 p-6 text-center text-sm text-slate-500">
-                  Curriculum lessons will be displayed once published by instructor.
+                  Curriculum lessons will be displayed once published by
+                  instructor.
                 </div>
               )}
             </section>
 
             {/* Student Reviews */}
-            <section id="reviews" className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
+            <section
+              id="reviews"
+              className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm"
+            >
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-xl font-bold text-slate-900">Student Reviews</h2>
+                  <h2 className="text-xl font-bold text-slate-900">
+                    Student Reviews
+                  </h2>
                   <p className="text-xs text-slate-500 mt-1">
                     Feedback from students enrolled in this course.
                   </p>
@@ -337,8 +364,12 @@ export default async function CourseDetail({
 
                 <div className="flex items-center gap-2">
                   <Star size={18} className="fill-amber-400 text-amber-400" />
-                  <span className="text-lg font-black text-slate-900">{avgRating}</span>
-                  <span className="text-xs text-slate-400">({totalReviews})</span>
+                  <span className="text-lg font-black text-slate-900">
+                    {avgRating}
+                  </span>
+                  <span className="text-xs text-slate-400">
+                    ({totalReviews})
+                  </span>
                 </div>
               </div>
 
@@ -393,27 +424,36 @@ export default async function CourseDetail({
                 </div>
               ) : (
                 <p className="text-sm text-slate-500">
-                  No reviews yet. Be the first enrolled student to leave a review!
+                  No reviews yet. Be the first enrolled student to leave a
+                  review!
                 </p>
               )}
             </section>
 
             {/* Instructor Info */}
-            <section id="instructor" className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
-              <h2 className="text-xl font-bold text-slate-900 mb-4">Your Instructor</h2>
+            <section
+              id="instructor"
+              className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm dark:border-slate-800 dark:bg-slate-800/90"
+            >
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
+                Your Instructor
+              </h2>
               <Link
                 href={`/instructors/${course.instructor_id}`}
-                className="flex items-center gap-4 rounded-xl p-3 transition hover:bg-slate-50 border border-slate-100"
+                prefetch={true}
+                className="flex items-center gap-4 rounded-xl p-3 transition hover:bg-slate-50 border border-slate-100 dark:border-slate-700 dark:hover:bg-slate-700/50"
               >
                 <span className="grid h-14 w-14 place-items-center rounded-2xl bg-blue-600 text-xl font-bold text-white shadow-sm">
                   {teacher.charAt(0).toUpperCase()}
                 </span>
                 <div>
-                  <h3 className="font-bold text-slate-900 text-base">{teacher}</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                  <h3 className="font-bold text-slate-900 dark:text-white text-base">
+                    {teacher}
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                     {ip?.headline ?? "Verified Academic Instructor"}
                   </p>
-                  <span className="mt-1 inline-block text-xs font-bold text-blue-600">
+                  <span className="mt-1 inline-block text-xs font-bold text-blue-600 dark:text-blue-400">
                     View profile and all courses →
                   </span>
                 </div>
@@ -421,11 +461,13 @@ export default async function CourseDetail({
             </section>
           </div>
 
-          {/* Right Column (4 cols): Course Features Card (PDF Page 3) */}
+          {/* Right Column */}
           <div className="lg:col-span-4">
-            <div className="sticky top-28 rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
-              <h3 className="text-lg font-bold text-slate-900 mb-5">Course Features</h3>
-              <ul className="space-y-4 text-sm font-semibold text-slate-700">
+            <div className="sticky top-28 rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm dark:border-slate-800 dark:bg-slate-800/90">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-5">
+                Course Features
+              </h3>
+              <ul className="space-y-4 text-sm font-semibold text-slate-700 dark:text-slate-300">
                 <li className="flex items-center gap-3">
                   <span className="grid h-6 w-6 place-items-center rounded-full bg-emerald-100 text-emerald-600 shrink-0">
                     <CheckCircle2 size={16} />

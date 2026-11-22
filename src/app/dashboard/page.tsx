@@ -99,10 +99,10 @@ export default async function Dashboard() {
         {/* 1. Header (PDF Page 4) */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
               Welcome back, {name}! 👋
             </h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               Keep learning and achieve your goals.
             </p>
           </div>
@@ -114,44 +114,44 @@ export default async function Dashboard() {
 
         {/* 2. 3 Stat Cards in a row (PDF Page 4) */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-          <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition dark:border-slate-800 dark:bg-slate-800/90">
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               Enrolled Courses
             </p>
-            <p className="mt-3 text-4xl font-black text-blue-600">
+            <p className="mt-3 text-4xl font-black text-blue-600 dark:text-blue-400">
               {courses.length}
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition dark:border-slate-800 dark:bg-slate-800/90">
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               Completed Lessons
             </p>
-            <p className="mt-3 text-4xl font-black text-slate-900">
+            <p className="mt-3 text-4xl font-black text-slate-900 dark:text-white">
               {totalDone}
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm hover:shadow-md transition dark:border-slate-800 dark:bg-slate-800/90">
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               Certificates
             </p>
-            <p className="mt-3 text-4xl font-black text-slate-900">
+            <p className="mt-3 text-4xl font-black text-slate-900 dark:text-white">
               {certs?.length ?? 0}
             </p>
           </div>
         </div>
 
         {/* 3. Weekly Learning Activity Graph (PDF & User Request 7) */}
-        <div className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
+        <div className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm dark:border-slate-800 dark:bg-slate-800/90">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-lg font-bold text-slate-900">Weekly Learning Activity</h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Weekly Learning Activity</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 {weekTotal} lessons completed in the last 7 days
               </p>
             </div>
-            <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-600">
+            <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-300">
               This Week
             </span>
           </div>
@@ -167,12 +167,12 @@ export default async function Dashboard() {
                       className={`w-full max-w-[40px] rounded-xl transition-all duration-300 ${
                         isToday || n > 0
                           ? "bg-gradient-to-t from-blue-600 to-indigo-500 shadow-sm shadow-blue-500/20 group-hover:from-blue-700 group-hover:to-indigo-600"
-                          : "bg-slate-100 group-hover:bg-slate-200"
+                          : "bg-slate-100 dark:bg-slate-700/60 group-hover:bg-slate-200 dark:group-hover:bg-slate-600"
                       }`}
                       style={{ height: `${heightPct}%` }}
                     />
                   </div>
-                  <span className={`text-xs font-semibold ${isToday ? "text-blue-600 font-bold" : "text-slate-400"}`}>
+                  <span className={`text-xs font-semibold ${isToday ? "text-blue-600 dark:text-blue-400 font-bold" : "text-slate-400 dark:text-slate-500"}`}>
                     {dayLabels[i]}
                   </span>
                 </div>
@@ -184,10 +184,11 @@ export default async function Dashboard() {
         {/* 4. My Courses Section (PDF Page 4) */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-slate-900">My Courses</h2>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">My Courses</h2>
             <Link
               href="/dashboard/courses"
-              className="flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:text-blue-700"
+              prefetch={true}
+              className="flex items-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700"
             >
               <span>View All</span>
               <ArrowRight size={14} />
@@ -199,10 +200,10 @@ export default async function Dashboard() {
               {courses.map((c) => (
                 <div
                   key={c.id}
-                  className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-sm hover:shadow-md transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
+                  className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-sm hover:shadow-md transition flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 dark:border-slate-800 dark:bg-slate-800/90"
                 >
                   <div className="flex items-center gap-5 min-w-0">
-                    <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-xl bg-slate-100 shadow-xs">
+                    <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-700 shadow-xs">
                       <Image
                         src={c.thumbnail}
                         alt={c.title}
@@ -211,25 +212,25 @@ export default async function Dashboard() {
                       />
                     </div>
                     <div className="min-w-0">
-                      <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">
+                      <span className="text-[11px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
                         {c.category}
                       </span>
-                      <h3 className="font-bold text-slate-900 text-base truncate">
+                      <h3 className="font-bold text-slate-900 dark:text-white text-base truncate">
                         {c.title}
                       </h3>
-                      <p className="text-xs text-slate-500 mt-1">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                         {c.done} of {c.total} lessons completed
                       </p>
 
                       {/* Progress Bar (PDF Page 4) */}
                       <div className="mt-3 flex items-center gap-3 w-48 sm:w-64">
-                        <div className="h-2 flex-1 rounded-full bg-slate-100 overflow-hidden">
+                        <div className="h-2 flex-1 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
                           <div
                             className="h-full rounded-full bg-blue-600 transition-all duration-500"
                             style={{ width: `${c.pct}%` }}
                           />
                         </div>
-                        <span className="text-xs font-bold text-slate-700">
+                        <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
                           {c.pct}%
                         </span>
                       </div>
@@ -238,6 +239,7 @@ export default async function Dashboard() {
 
                   <Link
                     href={`/dashboard/courses#c-${c.id}`}
+                    prefetch={true}
                     className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-blue-600 px-6 py-2.5 text-xs font-bold text-white shadow-md shadow-blue-600/20 hover:bg-blue-700 transition"
                   >
                     <span>Continue Learning</span>
@@ -247,14 +249,15 @@ export default async function Dashboard() {
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
-              <BookOpen size={36} className="mx-auto text-slate-300 mb-3" />
-              <h3 className="text-base font-bold text-slate-800">No enrolled courses yet</h3>
-              <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center dark:border-slate-700 dark:bg-slate-800/50">
+              <BookOpen size={36} className="mx-auto text-slate-300 dark:text-slate-600 mb-3" />
+              <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">No enrolled courses yet</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
                 Explore our catalog of university-grade courses and start learning today.
               </p>
               <Link
                 href="/courses"
+                prefetch={true}
                 className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-2.5 text-xs font-bold text-white shadow-md shadow-blue-600/20 hover:bg-blue-700"
               >
                 <span>Browse Courses</span>
@@ -268,8 +271,8 @@ export default async function Dashboard() {
         {certs && certs.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-slate-900">Your Certificates</h2>
-              <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">Your Certificates</h2>
+              <span className="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/60 dark:text-emerald-300 px-2.5 py-1 rounded-full">
                 {certs.length} Earned
               </span>
             </div>
@@ -278,11 +281,11 @@ export default async function Dashboard() {
               {certs.map((c: any) => (
                 <div
                   key={c.id}
-                  className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between"
+                  className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between dark:border-slate-800 dark:bg-slate-800/90"
                 >
                   <div>
                     <div className="flex items-center justify-between">
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700 dark:bg-blue-950/60 dark:text-blue-300">
                         <Award size={13} /> Certified
                       </span>
                       <span className="font-mono text-xs text-slate-400">
@@ -290,10 +293,10 @@ export default async function Dashboard() {
                       </span>
                     </div>
 
-                    <h3 className="font-bold text-slate-900 mt-3 line-clamp-1">
+                    <h3 className="font-bold text-slate-900 dark:text-white mt-3 line-clamp-1">
                       {(c.courses as any)?.title ?? "Completed Course"}
                     </h3>
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                       Issued on{" "}
                       {new Date(c.issued_at).toLocaleDateString("en-GB", {
                         day: "numeric",
@@ -303,17 +306,18 @@ export default async function Dashboard() {
                     </p>
                   </div>
 
-                  <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-3 text-xs">
+                  <div className="mt-5 flex items-center justify-between border-t border-slate-100 dark:border-slate-700 pt-3 text-xs">
                     <Link
                       href={`/dashboard/certificate/${c.course_id}`}
-                      className="font-bold text-blue-600 hover:text-blue-700"
+                      prefetch={true}
+                      className="font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700"
                     >
                       View Certificate →
                     </Link>
                     <Link
                       href={`/verify/${c.code}`}
                       target="_blank"
-                      className="text-slate-400 hover:text-slate-600 inline-flex items-center gap-1"
+                      className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 inline-flex items-center gap-1"
                     >
                       Verify <ExternalLink size={10} />
                     </Link>

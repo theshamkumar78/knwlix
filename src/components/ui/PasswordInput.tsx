@@ -31,7 +31,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-xs font-bold text-slate-700 uppercase tracking-wider"
+            className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider"
           >
             {label}
           </label>
@@ -42,7 +42,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             id={inputId}
             name={name}
             type={showPassword ? "text" : "password"}
-            className={`w-full rounded-xl border bg-slate-50/50 px-4 py-3 pr-11 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:bg-white focus:ring-2 ${
+            className={`w-full rounded-xl border bg-slate-50/50 px-4 py-3 pr-11 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:bg-white focus:ring-2 dark:border-slate-700 dark:bg-slate-800/80 dark:text-white dark:placeholder-slate-500 dark:focus:bg-slate-800 ${
               error
                 ? "border-rose-300 ring-rose-400/20 focus:border-rose-500"
                 : "border-slate-200 focus:border-blue-500 focus:ring-blue-500/20"
@@ -51,22 +51,19 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
           />
           <button
             type="button"
-            onClick={() => setShowPassword((prev) => !prev)}
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-400 dark:hover:text-slate-200 transition focus:outline-none"
             aria-label={showPassword ? "Hide password" : "Show password"}
-            aria-pressed={showPassword}
-            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none"
           >
             {showPassword ? (
-              <EyeOff className="h-4 w-4" aria-hidden="true" />
+              <EyeOff size={18} aria-hidden="true" />
             ) : (
-              <Eye className="h-4 w-4" aria-hidden="true" />
+              <Eye size={18} aria-hidden="true" />
             )}
           </button>
         </div>
         {error && (
-          <p role="alert" className="text-xs font-medium text-rose-600">
-            {error}
-          </p>
+          <p className="text-xs font-medium text-rose-600 dark:text-rose-400 mt-1">{error}</p>
         )}
       </div>
     );

@@ -6,7 +6,7 @@ import { updateProfile, updateStudentProfile } from "../actions";
 import GlassShell from "@/components/dashboard/GlassShell";
 
 const field =
-  "mt-1 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20";
+  "mt-1 w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-800/80 dark:text-white dark:placeholder-slate-500 dark:focus:bg-slate-800";
 
 export default async function Profile({
   searchParams,
@@ -85,8 +85,8 @@ export default async function Profile({
             {shown.charAt(0).toUpperCase()}
           </span>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">{shown}</h1>
-            <p className="text-xs text-slate-500 capitalize">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">{shown}</h1>
+            <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">
               {profile.role} · {user.email}
             </p>
           </div>
@@ -95,19 +95,19 @@ export default async function Profile({
         <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
           <form
             action={isStudent ? updateStudentProfile : updateProfile}
-            className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm space-y-4"
+            className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm space-y-4 dark:border-slate-800 dark:bg-slate-800/90"
           >
-            <h2 className="text-lg font-bold text-slate-900">Profile Details</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Profile Details</h2>
             {saved && (
               <p
                 role="status"
-                className="rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-2.5 text-xs font-semibold text-emerald-800"
+                className="rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-2.5 text-xs font-semibold text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800"
               >
                 Profile saved successfully.
               </p>
             )}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                 Full Name
               </label>
               <input

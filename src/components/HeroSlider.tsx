@@ -1,14 +1,39 @@
 "use client";
+
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Pause, Play, PlayCircle, Award, BadgeCheck } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Pause,
+  Play,
+  PlayCircle,
+  Award,
+  BadgeCheck,
+  Sparkles,
+  ArrowRight,
+  Star,
+  Flame,
+  CheckCircle2,
+  ShieldCheck,
+  TrendingUp,
+} from "lucide-react";
 
 type Role = "student" | "instructor" | "admin" | null;
 
 function buildSlides(role: Role) {
-  const dash = role === "instructor" ? "/instructor" : role === "admin" ? "/admin" : "/dashboard/courses";
-  const dashLabel = role === "instructor" || role === "admin" ? "Open My Dashboard" : "Continue Learning";
+  const dash =
+    role === "instructor"
+      ? "/instructor"
+      : role === "admin"
+      ? "/admin"
+      : "/dashboard";
+  const dashLabel =
+    role === "instructor" || role === "admin"
+      ? "Open My Dashboard"
+      : "Continue Learning";
+
   return [
     {
       key: "welcome",
@@ -16,135 +41,261 @@ function buildSlides(role: Role) {
       title: "Learn Without Limits. Grow Without Boundaries.",
       text: "Welcome to Knowlix, your modern online learning destination. Discover new skills, explore expert-led courses, and build the knowledge you need to achieve your goals.",
       cta: { label: "Explore Courses", href: "/courses" },
-      bg: "bg-gradient-to-br from-[#ebe7ff] to-[#f8f6ff]",
+      secondaryCta: { label: "How It Works", href: "/#categories" },
+      lightBg: "bg-gradient-to-br from-blue-50/90 via-white to-indigo-50/70 border-blue-100",
+      darkBg: "dark:bg-gradient-to-br dark:from-slate-900 dark:via-blue-950/40 dark:to-slate-900 dark:border-slate-800",
+      accent: "from-blue-600 to-indigo-600",
       art: "player",
     },
     {
       key: "skills",
-      chip: "Learn new skills",
+      chip: "Industry-Ready Curriculum",
       title: "Your Future Starts With What You Learn Today.",
       text: "From technology and programming to business and professional development, discover learning opportunities designed to help you grow and succeed.",
-      cta: role ? { label: dashLabel, href: dash } : { label: "Start Learning", href: "/signup" },
-      bg: "bg-gradient-to-br from-[#d9f6ee] to-[#f1fcf9]",
+      cta: role
+        ? { label: dashLabel, href: dash }
+        : { label: "Start Learning", href: "/signup" },
+      secondaryCta: { label: "Browse Catalog", href: "/courses" },
+      lightBg: "bg-gradient-to-br from-emerald-50/90 via-white to-teal-50/70 border-emerald-100",
+      darkBg: "dark:bg-gradient-to-br dark:from-slate-900 dark:via-emerald-950/30 dark:to-slate-900 dark:border-slate-800",
+      accent: "from-emerald-600 to-teal-600",
       art: "progress",
     },
     {
       key: "succeed",
-      chip: "Learn, practice and succeed",
+      chip: "Accredited & Verifiable",
       title: "Turn Your Knowledge Into Real-World Skills.",
-      text: "Learn at your own pace, track your progress, complete lessons, and take the next step toward your academic and professional success with Knowlix.",
-      cta: role ? { label: dashLabel, href: dash } : { label: "Join Knowlix", href: "/signup" },
-      bg: "bg-gradient-to-br from-[#ffeccc] to-[#fff8ec]",
+      text: "Learn at your own pace, track your progress, complete assessments, and take the next step toward your academic and professional success with Knowlix.",
+      cta: role
+        ? { label: dashLabel, href: dash }
+        : { label: "Join Knowlix", href: "/signup" },
+      secondaryCta: { label: "View Certificates", href: "/courses" },
+      lightBg: "bg-gradient-to-br from-amber-50/90 via-white to-orange-50/70 border-amber-100",
+      darkBg: "dark:bg-gradient-to-br dark:from-slate-900 dark:via-amber-950/30 dark:to-slate-900 dark:border-slate-800",
+      accent: "from-amber-500 to-orange-600",
       art: "certificate",
     },
   ] as const;
 }
 
-const card = "rounded-[22px] border border-[#e3defa] bg-white shadow-[0_10px_28px_rgba(91,63,224,0.10)]";
-
-function Float({ children, className, delay = 0 }: { children: React.ReactNode; className: string; delay?: number }) {
-  const reduce = useReducedMotion();
-  return (
-    <motion.div
-      className={`${card} absolute ${className}`}
-      animate={reduce ? undefined : { y: [0, -8, 0] }}
-      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay }}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
+/* =========================================================
+   INTERACTIVE ART 1: VIDEO CLASSROOM PLAYER
+   ========================================================= */
 function PlayerArt() {
   return (
-    <div className="relative px-2 pb-6 pt-4 sm:px-6">
-      <div className={`${card} rounded-[26px] p-3.5`}>
-        <div className="mb-3 flex gap-1.5 px-2">
-          <i className="h-2.5 w-2.5 rounded-full bg-red-300" />
-          <i className="h-2.5 w-2.5 rounded-full bg-amber-300" />
-          <i className="h-2.5 w-2.5 rounded-full bg-green-300" />
-        </div>
-        <div className="grid gap-3 sm:grid-cols-[1.5fr_1fr]">
-          <div className="relative grid h-44 place-items-center rounded-2xl bg-gradient-to-br from-[#8b6cf6] to-[#5b3fe0] sm:h-56">
-            <span className="grid h-16 w-16 place-items-center rounded-full bg-white"><PlayCircle size={32} className="text-[#5b3fe0]" /></span>
-            <span className="absolute bottom-3 left-4 text-sm font-bold text-white">Video lesson</span>
+    <div className="relative w-full max-w-lg mx-auto py-2">
+      {/* Main Glass Card */}
+      <div className="relative rounded-3xl border border-slate-200/80 bg-white/95 p-4 shadow-xl shadow-blue-900/5 backdrop-blur-md dark:border-slate-700/80 dark:bg-slate-800/95 sm:p-5">
+        {/* Browser Top Bar */}
+        <div className="mb-3.5 flex items-center justify-between border-b border-slate-100 pb-2.5 dark:border-slate-700">
+          <div className="flex gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
           </div>
-          <div className="hidden flex-col gap-2.5 sm:flex">
-            <div className="rounded-xl bg-[#ebe7ff] p-3 text-sm font-bold">1. Introduction</div>
-            <div className="rounded-xl bg-[#f5f3ff] p-3 text-sm">2. Core ideas</div>
-            <div className="rounded-xl bg-[#f5f3ff] p-3 text-sm">3. Practice</div>
-            <div className="mt-auto h-2 rounded-full bg-[#ebe7ff]"><div className="h-2 w-2/5 rounded-full bg-gradient-to-r from-[#1fb89a] to-[#5b3fe0]" /></div>
+          <span className="flex items-center gap-1 text-[11px] font-semibold text-slate-400">
+            <ShieldCheck size={13} className="text-blue-500" />
+            Knowlix Video Engine
+          </span>
+        </div>
+
+        {/* Video Player Display */}
+        <div className="relative grid h-44 w-full place-items-center overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-slate-900 sm:h-52">
+          {/* Subtle grid pattern */}
+          <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]" />
+          
+          {/* Play Button with animated pulse */}
+          <div className="relative z-10 flex flex-col items-center gap-2">
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              className="grid h-16 w-16 place-items-center rounded-full bg-white/90 text-blue-600 shadow-lg shadow-blue-900/30 backdrop-blur-sm cursor-pointer"
+            >
+              <PlayCircle size={38} className="text-blue-600 fill-blue-50" />
+            </motion.div>
+            <span className="rounded-full bg-slate-900/70 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
+              Python Masterclass · Lesson 04
+            </span>
+          </div>
+
+          <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-[11px] font-semibold text-slate-200">
+            <span>12:45 / 24:10</span>
+            <span className="rounded bg-blue-500/80 px-1.5 py-0.5 text-[10px] text-white">HD 1080p</span>
+          </div>
+        </div>
+
+        {/* Course Chapters List */}
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          <div className="flex items-center gap-1.5 rounded-xl bg-blue-50 p-2 text-xs font-bold text-blue-700 dark:bg-blue-950/60 dark:text-blue-300">
+            <CheckCircle2 size={14} className="text-blue-600 shrink-0" />
+            <span className="truncate">1. Syntax</span>
+          </div>
+          <div className="flex items-center gap-1.5 rounded-xl bg-slate-100 p-2 text-xs font-semibold text-slate-700 dark:bg-slate-700/60 dark:text-slate-200">
+            <span className="grid h-4 w-4 place-items-center rounded-full bg-blue-600 text-[10px] text-white shrink-0">2</span>
+            <span className="truncate">2. Loops</span>
+          </div>
+          <div className="flex items-center gap-1.5 rounded-xl bg-slate-50 p-2 text-xs text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+            <span className="grid h-4 w-4 place-items-center rounded-full bg-slate-300 text-[10px] text-slate-700 shrink-0">3</span>
+            <span className="truncate">3. Project</span>
           </div>
         </div>
       </div>
-      <Float className="right-0 top-0 flex items-center gap-2.5 px-4 py-3">
-        <span className="grid h-9 w-9 place-items-center rounded-full bg-[#d9f6ee]"><BadgeCheck size={20} className="text-[#0e8f78]" /></span>
-        <b className="text-sm">Progress tracking</b>
-      </Float>
-      <Float className="bottom-0 left-0 flex items-center gap-2.5 px-4 py-3" delay={1.2}>
-        <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#fef3c7]"><Award size={20} className="text-[#a16207]" /></span>
-        <b className="text-sm">Certificates</b>
-      </Float>
+
+      {/* Floating Micro-Badge: Review Rating */}
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 px-2">
+        <div className="flex items-center gap-2 rounded-2xl border border-slate-200/80 bg-white px-3.5 py-2 shadow-md dark:border-slate-700 dark:bg-slate-800">
+          <div className="flex text-amber-400">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} size={13} fill="currentColor" />
+            ))}
+          </div>
+          <span className="text-xs font-bold text-slate-800 dark:text-slate-100">4.9 / 5.0 Rating</span>
+        </div>
+
+        <div className="flex items-center gap-2 rounded-2xl border border-slate-200/80 bg-white px-3.5 py-2 shadow-md dark:border-slate-700 dark:bg-slate-800">
+          <BadgeCheck size={16} className="text-emerald-500" />
+          <span className="text-xs font-bold text-slate-800 dark:text-slate-100">Verified Platform</span>
+        </div>
+      </div>
     </div>
   );
 }
 
+/* =========================================================
+   INTERACTIVE ART 2: LEARNING HABIT & PROGRESS
+   ========================================================= */
 function ProgressArt() {
-  const rows = [["Lesson 1", 100], ["Lesson 2", 75], ["Lesson 3", 40], ["Lesson 4", 10]] as const;
+  const skills = [
+    { name: "Full-Stack Web Engineering", pct: 92, color: "from-blue-500 to-indigo-600" },
+    { name: "Python Data & Algorithms", pct: 84, color: "from-emerald-500 to-teal-600" },
+    { name: "UI/UX Design Systems", pct: 68, color: "from-amber-500 to-orange-500" },
+  ];
+
   return (
-    <div className="relative px-2 pb-6 pt-4 sm:px-6">
-      <div className={`${card} p-5`}>
-        <div className="mb-4 flex items-center justify-between">
-          <b className="text-lg">My courses</b>
-          <span className="rounded-full bg-[#d9f6ee] px-3 py-1 text-xs font-bold text-[#0b6b57]">This week</span>
+    <div className="relative w-full max-w-lg mx-auto py-2">
+      <div className="rounded-3xl border border-slate-200/80 bg-white/95 p-5 shadow-xl shadow-emerald-900/5 backdrop-blur-md dark:border-slate-700/80 dark:bg-slate-800/95">
+        <div className="mb-4 flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-700">
+          <div>
+            <h4 className="text-sm font-extrabold text-slate-900 dark:text-white">Active Learning Path</h4>
+            <p className="text-xs text-slate-500">Live Weekly Momentum</p>
+          </div>
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
+            <Flame size={14} className="text-orange-500 fill-orange-500" />
+            7-Day Streak
+          </span>
         </div>
-        <div className="space-y-3">
-          {rows.map(([t, p]) => (
-            <div key={t} className="rounded-2xl bg-[#f5faf8] p-3">
-              <div className="mb-2 flex justify-between text-sm font-semibold"><span>{t}</span><span>{p}%</span></div>
-              <div className="h-2 rounded-full bg-[#d9f6ee]"><div className="h-2 rounded-full bg-gradient-to-r from-[#1fb89a] to-[#5b3fe0]" style={{ width: `${p}%` }} /></div>
+
+        {/* Progress Bars */}
+        <div className="space-y-3.5">
+          {skills.map((s) => (
+            <div key={s.name} className="rounded-2xl bg-slate-50 p-3 dark:bg-slate-900/60">
+              <div className="mb-1.5 flex justify-between text-xs font-bold">
+                <span className="text-slate-800 dark:text-slate-200">{s.name}</span>
+                <span className="text-blue-600 dark:text-blue-400">{s.pct}%</span>
+              </div>
+              <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${s.pct}%` }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  className={`h-full rounded-full bg-gradient-to-r ${s.color}`}
+                />
+              </div>
             </div>
           ))}
         </div>
-        <div className="mt-4 flex h-14 items-end gap-2">
-          {[30, 55, 40, 80, 65, 100, 45].map((h, i) => (
-            <i key={i} className="flex-1 rounded-md bg-gradient-to-b from-[#5eead4] to-[#5b3fe0]" style={{ height: `${h}%` }} />
-          ))}
+
+        {/* Weekly Activity Mini Histogram */}
+        <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700">
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-500 mb-2">
+            <span>Weekly Study Hours</span>
+            <span className="font-bold text-emerald-600">+14% vs last week</span>
+          </div>
+          <div className="flex h-12 items-end gap-2 px-1">
+            {[40, 65, 50, 85, 70, 100, 60].map((h, i) => (
+              <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                <div
+                  className="w-full rounded-md bg-gradient-to-t from-emerald-600 to-teal-400 transition-all"
+                  style={{ height: `${h}%` }}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-      <Float className="left-0 top-6 flex items-center gap-2.5 px-4 py-3">
-        <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#d9f6ee]"><BadgeCheck size={20} className="text-[#0e8f78]" /></span>
-        <b className="text-sm">Lesson completed</b>
-      </Float>
+
+      {/* Floating Micro-Badge */}
+      <div className="mt-3 flex items-center justify-between px-2">
+        <div className="flex items-center gap-2 rounded-2xl border border-slate-200/80 bg-white px-3.5 py-2 shadow-md dark:border-slate-700 dark:bg-slate-800">
+          <TrendingUp size={16} className="text-blue-500" />
+          <span className="text-xs font-bold text-slate-800 dark:text-slate-100">Top 5% Learner</span>
+        </div>
+        <div className="flex items-center gap-2 rounded-2xl border border-slate-200/80 bg-white px-3.5 py-2 shadow-md dark:border-slate-700 dark:bg-slate-800">
+          <Award size={16} className="text-amber-500" />
+          <span className="text-xs font-bold text-slate-800 dark:text-slate-100">3 Badges Earned</span>
+        </div>
+      </div>
     </div>
   );
 }
 
+/* =========================================================
+   INTERACTIVE ART 3: VERIFIABLE ACCREDITED CERTIFICATE
+   ========================================================= */
 function CertificateArt() {
   return (
-    <div className="relative px-2 pb-8 pt-6 sm:px-6">
-      <div className={`${card} -rotate-3 rounded-[20px] p-3.5`}>
-        <div className="rounded-2xl border-[5px] border-double border-[#5b3fe0] bg-white p-6 text-center">
-          <p className="text-xs font-extrabold tracking-[0.3em] text-[#5b3fe0]">KNOWLIX</p>
-          <h3 className="mb-3 mt-2 text-2xl font-extrabold">Certificate of Completion</h3>
-          <p className="text-xs text-[#4b4876]">This is to certify that</p>
-          <p className="my-1.5 border-b border-[#e3defa] pb-1.5 text-2xl font-extrabold">Your Name Here</p>
-          <p className="text-xs text-[#4b4876]">has completed the course</p>
-          <p className="mt-1 text-lg font-extrabold text-[#5b3fe0]">Your Course Title</p>
+    <div className="relative w-full max-w-lg mx-auto py-2">
+      <div className="relative rounded-3xl border border-amber-200/90 bg-gradient-to-b from-amber-50/50 to-white p-5 shadow-xl shadow-amber-900/10 backdrop-blur-md dark:border-amber-900/50 dark:from-slate-800 dark:to-slate-900">
+        {/* Certificate inner decorative frame */}
+        <div className="rounded-2xl border-2 border-dashed border-amber-300/80 bg-white p-5 text-center dark:border-amber-700/60 dark:bg-slate-900/90">
+          <div className="flex items-center justify-center gap-2 text-amber-600 dark:text-amber-400">
+            <Award size={22} />
+            <span className="text-xs font-black tracking-widest uppercase">KNOWLIX OFFICIAL</span>
+          </div>
+
+          <h3 className="mt-2 text-lg font-black text-slate-900 dark:text-white sm:text-xl">
+            Certificate of Completion
+          </h3>
+          <p className="mt-1 text-[11px] text-slate-500">Awarded for academic excellence and project mastery to</p>
+
+          <p className="my-2 border-b border-amber-200 pb-1.5 text-base font-extrabold text-blue-600 dark:border-amber-800 dark:text-blue-400">
+            Sham Kumar
+          </p>
+
+          <p className="text-[11px] text-slate-500">for successfully completing the curriculum</p>
+          <p className="mt-0.5 text-xs font-bold text-slate-800 dark:text-slate-200">
+            Modern Full-Stack Web Development & Cloud Systems
+          </p>
+
+          {/* Verification Bar */}
+          <div className="mt-3.5 flex items-center justify-between border-t border-slate-100 pt-2.5 text-[10px] text-slate-400 dark:border-slate-800">
+            <span className="font-mono">ID: KNX-9482-VERIFIED</span>
+            <span className="flex items-center gap-1 font-bold text-emerald-600 dark:text-emerald-400">
+              <ShieldCheck size={12} />
+              Cryptographically Signed
+            </span>
+          </div>
         </div>
       </div>
-      <Float className="bottom-0 right-0 flex items-center gap-3 px-4 py-3" delay={0.8}>
-        <span className="grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-[#f59e0b] to-[#ea580c] font-extrabold text-white">K</span>
-        <div><b className="block text-sm">Expert-led courses</b><span className="text-xs text-[#4b4876]">Published by instructors</span></div>
-      </Float>
+
+      {/* Floating Micro-Badge */}
+      <div className="mt-3 flex items-center justify-between px-2">
+        <div className="flex items-center gap-2 rounded-2xl border border-slate-200/80 bg-white px-3.5 py-2 shadow-md dark:border-slate-700 dark:bg-slate-800">
+          <span className="grid h-6 w-6 place-items-center rounded-full bg-amber-100 text-xs font-black text-amber-700">QR</span>
+          <span className="text-xs font-bold text-slate-800 dark:text-slate-100">Live Online Verification</span>
+        </div>
+        <div className="flex items-center gap-2 rounded-2xl border border-slate-200/80 bg-white px-3.5 py-2 shadow-md dark:border-slate-700 dark:bg-slate-800">
+          <BadgeCheck size={16} className="text-blue-500" />
+          <span className="text-xs font-bold text-slate-800 dark:text-slate-100">Share to LinkedIn</span>
+        </div>
+      </div>
     </div>
   );
 }
 
-const variants = {
-  enter: (d: number) => ({ x: d * 48, opacity: 0 }),
+const slideVariants = {
+  enter: (d: number) => ({ x: d > 0 ? 40 : -40, opacity: 0 }),
   center: { x: 0, opacity: 1 },
-  exit: (d: number) => ({ x: -d * 48, opacity: 0 }),
+  exit: (d: number) => ({ x: d > 0 ? -40 : 40, opacity: 0 }),
 };
 
 export default function HeroSlider({ role }: { role: Role }) {
@@ -156,10 +307,13 @@ export default function HeroSlider({ role }: { role: Role }) {
   const [hidden, setHidden] = useState(false);
   const [userPaused, setUserPaused] = useState(false);
 
-  const go = useCallback((n: number, d: number) => {
-    setDir(d);
-    setI((n + slides.length) % slides.length);
-  }, [slides.length]);
+  const go = useCallback(
+    (n: number, d: number) => {
+      setDir(d);
+      setI((n + slides.length) % slides.length);
+    },
+    [slides.length]
+  );
 
   useEffect(() => {
     const f = () => setHidden(document.hidden);
@@ -175,25 +329,32 @@ export default function HeroSlider({ role }: { role: Role }) {
   }, [i, running, go]);
 
   const s = slides[i];
-  const Art = s.art === "player" ? PlayerArt : s.art === "progress" ? ProgressArt : CertificateArt;
-  const ctrl = "grid h-11 w-11 place-items-center rounded-full border border-[#cfc6f7] bg-white text-[#3b27a8] transition hover:bg-[#ebe7ff]";
+  const Art =
+    s.art === "player"
+      ? PlayerArt
+      : s.art === "progress"
+      ? ProgressArt
+      : CertificateArt;
+
+  const ctrlBtn =
+    "grid h-10 w-10 place-items-center rounded-full border border-slate-200 bg-white/90 text-slate-700 shadow-sm backdrop-blur-md transition hover:border-blue-500 hover:bg-blue-50 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800/90 dark:text-slate-200 dark:hover:border-blue-400 dark:hover:bg-slate-700";
 
   return (
     <section
       aria-roledescription="carousel"
-      aria-label="Knowlix highlights"
-      className="mx-auto max-w-7xl px-4 py-6 text-[#1b1740]"
+      aria-label="Knowlix Highlights Slider"
+      className="mx-auto max-w-7xl px-4 py-4 sm:py-6"
       onMouseEnter={() => setHold(true)}
       onMouseLeave={() => setHold(false)}
       onFocus={() => setHold(true)}
       onBlur={() => setHold(false)}
     >
-      <div className="relative overflow-hidden rounded-[36px] border border-[#e3defa]">
+      <div className={`relative overflow-hidden rounded-[32px] border ${s.lightBg} ${s.darkBg} shadow-xl shadow-blue-900/5 transition-colors duration-300`}>
         <AnimatePresence mode="wait" custom={dir} initial={false}>
           <motion.div
             key={s.key}
             custom={dir}
-            variants={variants}
+            variants={slideVariants}
             initial="enter"
             animate="center"
             exit="exit"
@@ -201,38 +362,83 @@ export default function HeroSlider({ role }: { role: Role }) {
             drag="x"
             dragDirectionLock
             dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.15}
+            dragElastic={0.12}
             onDragEnd={(_, info) => {
-              if (info.offset.x < -60) go(i + 1, 1);
-              else if (info.offset.x > 60) go(i - 1, -1);
+              if (info.offset.x < -50) go(i + 1, 1);
+              else if (info.offset.x > 50) go(i - 1, -1);
             }}
             role="group"
             aria-roledescription="slide"
             aria-label={`Slide ${i + 1} of ${slides.length}`}
-            aria-live={running ? "off" : "polite"}
-            className={`${s.bg} grid min-h-[620px] items-center gap-8 px-6 pb-24 pt-10 sm:px-14 lg:min-h-[600px] lg:grid-cols-[1fr_1.05fr]`}
+            className="grid min-h-[580px] items-center gap-8 px-6 pb-24 pt-8 sm:px-12 lg:min-h-[520px] lg:grid-cols-[1.1fr_0.9fr] lg:pb-16 lg:pt-12"
           >
-            <div>
-              <span className="inline-block rounded-full border border-[#e3defa] bg-white px-4 py-1.5 text-sm font-bold text-[#3b27a8]">{s.chip}</span>
-              <h1 className="my-5 text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl">{s.title}</h1>
-              <p className="mb-7 max-w-lg text-lg text-[#4b4876]">{s.text}</p>
-              <Link
-                href={s.cta.href}
-                className="inline-flex items-center rounded-full bg-[#5b3fe0] px-7 py-3.5 font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#4a31c8]"
-              >
-                {s.cta.label}
-              </Link>
+            {/* Left Content Column */}
+            <div className="z-10">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200/80 bg-white/80 px-3.5 py-1 text-xs font-bold text-blue-700 shadow-xs backdrop-blur-sm dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-blue-300">
+                <Sparkles size={13} className="text-blue-600 dark:text-blue-400" />
+                {s.chip}
+              </span>
+
+              <h1 className="mt-4 text-3xl font-black leading-[1.12] tracking-tight text-slate-900 dark:text-white sm:text-4xl md:text-5xl">
+                {s.title}
+              </h1>
+
+              <p className="mt-4 max-w-lg text-base leading-relaxed text-slate-600 dark:text-slate-300 sm:text-lg">
+                {s.text}
+              </p>
+
+              {/* Action Buttons */}
+              <div className="mt-7 flex flex-wrap items-center gap-3">
+                <Link
+                  href={s.cta.href}
+                  prefetch={true}
+                  className="btn btn-primary shadow-lg shadow-blue-600/30 font-bold"
+                >
+                  <span>{s.cta.label}</span>
+                  <ArrowRight size={16} />
+                </Link>
+
+                <Link
+                  href={s.secondaryCta.href}
+                  prefetch={true}
+                  className="btn btn-outline"
+                >
+                  {s.secondaryCta.label}
+                </Link>
+              </div>
             </div>
-            <div aria-hidden="true"><Art /></div>
+
+            {/* Right Visual Art Column */}
+            <div aria-hidden="true" className="w-full">
+              <Art />
+            </div>
           </motion.div>
         </AnimatePresence>
 
-        <div className="absolute inset-x-5 bottom-4 flex items-center justify-between sm:inset-x-12">
-          <div className="flex gap-2.5">
-            <button type="button" onClick={() => go(i - 1, -1)} aria-label="Previous slide" className={ctrl}><ChevronLeft size={20} /></button>
-            <button type="button" onClick={() => go(i + 1, 1)} aria-label="Next slide" className={ctrl}><ChevronRight size={20} /></button>
+        {/* Bottom Carousel Controls Bar */}
+        <div className="absolute inset-x-4 bottom-4 flex items-center justify-between sm:inset-x-10">
+          {/* Arrow Buttons */}
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => go(i - 1, -1)}
+              aria-label="Previous slide"
+              className={ctrlBtn}
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <button
+              type="button"
+              onClick={() => go(i + 1, 1)}
+              aria-label="Next slide"
+              className={ctrlBtn}
+            >
+              <ChevronRight size={18} />
+            </button>
           </div>
-          <div role="tablist" aria-label="Choose slide" className="flex items-center">
+
+          {/* Indicator Pills */}
+          <div role="tablist" aria-label="Select slide" className="flex items-center gap-1.5">
             {slides.map((sl, n) => (
               <button
                 key={sl.key}
@@ -241,19 +447,35 @@ export default function HeroSlider({ role }: { role: Role }) {
                 aria-selected={n === i}
                 aria-label={`Go to slide ${n + 1}`}
                 onClick={() => go(n, n > i ? 1 : -1)}
-                className="p-2.5"
+                className="py-2 px-1 focus:outline-none"
               >
-                <span className={`block h-2.5 rounded-full transition-all ${n === i ? "w-8 bg-[#5b3fe0]" : "w-2.5 bg-[#c9c0f3]"}`} />
+                <span
+                  className={`block h-2 rounded-full transition-all duration-300 ${
+                    n === i
+                      ? "w-8 bg-blue-600 shadow-sm shadow-blue-600/40"
+                      : "w-2.5 bg-slate-300 hover:bg-slate-400 dark:bg-slate-700 dark:hover:bg-slate-600"
+                  }`}
+                />
               </button>
             ))}
           </div>
-          <div className="flex items-center gap-3">
+
+          {/* Pause / Resume & Slide Counter */}
+          <div className="flex items-center gap-2 sm:gap-3">
             {!reduce && (
-              <button type="button" onClick={() => setUserPaused((p) => !p)} aria-label={userPaused ? "Play slideshow" : "Pause slideshow"} className={ctrl}>
-                {userPaused ? <Play size={18} /> : <Pause size={18} />}
+              <button
+                type="button"
+                onClick={() => setUserPaused((p) => !p)}
+                aria-label={userPaused ? "Resume auto sliding" : "Pause auto sliding"}
+                title={userPaused ? "Resume auto sliding" : "Pause auto sliding"}
+                className={ctrlBtn}
+              >
+                {userPaused ? <Play size={16} /> : <Pause size={16} />}
               </button>
             )}
-            <span className="hidden text-sm font-semibold text-[#4b4876] sm:block">0{i + 1} / 0{slides.length}</span>
+            <span className="hidden text-xs font-bold text-slate-500 dark:text-slate-400 sm:block">
+              0{i + 1} / 0{slides.length}
+            </span>
           </div>
         </div>
       </div>

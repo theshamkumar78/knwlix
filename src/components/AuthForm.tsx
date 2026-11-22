@@ -84,8 +84,8 @@ export default function AuthForm({
         setMsg({ ok: false, text: error.message });
       } else {
         const next = params.get("next");
-        router.push(next && next.startsWith("/") ? next : "/dashboard");
-        router.refresh();
+        const target = next && next.startsWith("/") ? next : "/dashboard";
+        window.location.href = target;
       }
     } else if (mode === "signup") {
       const { error } = await sb.auth.signUp({
@@ -121,7 +121,7 @@ export default function AuthForm({
   }
 
   return (
-    <section className="min-h-[calc(100vh-5rem)] bg-[#f8fafc] text-slate-900 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+    <section className="min-h-[calc(100vh-5rem)] bg-[#f8fafc] text-slate-900 dark:bg-[#0b1329] dark:text-slate-100 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 transition-colors">
       <div className="mx-auto w-full max-w-5xl grid items-center gap-12 lg:grid-cols-12">
         {/* Left Column: Brand & 3D Illustration Graphic (PDF Page 7) */}
         <div className="hidden lg:flex lg:col-span-6 flex-col justify-center space-y-8 pr-4">
@@ -135,23 +135,23 @@ export default function AuthForm({
           </div>
 
           <div className="text-center lg:text-left">
-            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 leading-tight">
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
               Join Knowlix <br />
-              <span className="text-blue-600">Start Your Learning</span> <br />
+              <span className="text-blue-600 dark:text-blue-400">Start Your Learning</span> <br />
               Journey Today
             </h1>
-            <p className="mt-3 text-sm text-slate-500 max-w-sm">
+            <p className="mt-3 text-sm text-slate-500 dark:text-slate-400 max-w-sm">
               Connect with university-grade courses, track your lessons, and earn certified credentials.
             </p>
           </div>
         </div>
 
-        {/* Right Column: Clean White Auth Card (PDF Page 7) */}
+        {/* Right Column: Clean Auth Card (PDF Page 7) */}
         <div className="lg:col-span-6 flex justify-center">
-          <div className="w-full max-w-md rounded-3xl border border-slate-200/80 bg-white p-8 sm:p-10 shadow-xl shadow-blue-500/5">
+          <div className="w-full max-w-md rounded-3xl border border-slate-200/80 bg-white p-8 sm:p-10 shadow-xl shadow-blue-500/5 dark:border-slate-800 dark:bg-slate-800/90">
             {/* Segmented [ Login ] [ Sign Up ] Tabs (PDF Page 7) */}
             {mode !== "forgot" && (
-              <div className="mb-8 grid grid-cols-2 gap-1 rounded-2xl bg-slate-100 p-1.5 text-xs font-bold">
+              <div className="mb-8 grid grid-cols-2 gap-1 rounded-2xl bg-slate-100 dark:bg-slate-700/60 p-1.5 text-xs font-bold">
                 <button
                   type="button"
                   onClick={() => {
@@ -160,8 +160,8 @@ export default function AuthForm({
                   }}
                   className={`py-2.5 rounded-xl transition ${
                     mode === "login"
-                      ? "bg-white text-slate-900 shadow-sm"
-                      : "text-slate-500 hover:text-slate-900"
+                      ? "bg-white text-slate-900 shadow-sm dark:bg-slate-800 dark:text-white"
+                      : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                   }`}
                 >
                   Login
@@ -174,8 +174,8 @@ export default function AuthForm({
                   }}
                   className={`py-2.5 rounded-xl transition ${
                     mode === "signup"
-                      ? "bg-white text-slate-900 shadow-sm"
-                      : "text-slate-500 hover:text-slate-900"
+                      ? "bg-white text-slate-900 shadow-sm dark:bg-slate-800 dark:text-white"
+                      : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                   }`}
                 >
                   Sign Up
@@ -185,8 +185,8 @@ export default function AuthForm({
 
             {mode === "forgot" && (
               <div className="mb-6">
-                <h2 className="text-2xl font-black text-slate-900">Reset Password</h2>
-                <p className="text-xs text-slate-500 mt-1">
+                <h2 className="text-2xl font-black text-slate-900 dark:text-white">Reset Password</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                   Enter your email address to receive a secure password reset link.
                 </p>
               </div>
@@ -195,7 +195,7 @@ export default function AuthForm({
             <form onSubmit={submit} className="space-y-4">
               {mode === "signup" && (
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                     Full Name
                   </label>
                   <input
@@ -205,13 +205,13 @@ export default function AuthForm({
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. Sham Kumar"
-                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-700/60 dark:text-white dark:placeholder-slate-400 dark:focus:bg-slate-800"
                   />
                 </div>
               )}
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-1.5">
                   Email Address
                 </label>
                 <input
@@ -221,7 +221,7 @@ export default function AuthForm({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-700/60 dark:text-white dark:placeholder-slate-400 dark:focus:bg-slate-800"
                 />
               </div>
 
@@ -267,7 +267,7 @@ export default function AuthForm({
               {/* Remember Me & Forgot Password (PDF Page 7) */}
               {mode === "login" && (
                 <div className="flex items-center justify-between pt-1 text-xs">
-                  <label className="flex items-center gap-2 cursor-pointer text-slate-600">
+                  <label className="flex items-center gap-2 cursor-pointer text-slate-600 dark:text-slate-300">
                     <input
                       type="checkbox"
                       checked={rememberMe}
@@ -283,7 +283,7 @@ export default function AuthForm({
                       setMode("forgot");
                       setMsg(null);
                     }}
-                    className="font-bold text-blue-600 hover:text-blue-700"
+                    className="font-bold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                   >
                     Forgot Password?
                   </button>
@@ -296,8 +296,8 @@ export default function AuthForm({
                   role="alert"
                   className={`rounded-xl p-3 text-xs font-semibold ${
                     msg.ok
-                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                      : "bg-rose-50 text-rose-700 border border-rose-200"
+                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800"
+                      : "bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800"
                   }`}
                 >
                   {msg.text}
@@ -325,7 +325,7 @@ export default function AuthForm({
                   <button
                     type="button"
                     onClick={() => setMode("login")}
-                    className="text-xs font-bold text-blue-600 hover:underline"
+                    className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline"
                   >
                     Back to Login
                   </button>
@@ -336,17 +336,17 @@ export default function AuthForm({
               {mode !== "forgot" && (
                 <div className="pt-4">
                   <div className="relative text-center text-xs text-slate-400 mb-4">
-                    <span className="bg-white px-2 relative z-10 font-medium">
+                    <span className="bg-white dark:bg-slate-800 px-2 relative z-10 font-medium">
                       or continue with
                     </span>
-                    <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 border-t border-slate-200" />
+                    <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 border-t border-slate-200 dark:border-slate-700" />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => alert("Social Google login is configured via Supabase Auth.")}
-                      className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition"
+                      className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
                     >
                       <Chrome size={16} className="text-rose-500" />
                       <span>Google</span>
@@ -354,9 +354,9 @@ export default function AuthForm({
                     <button
                       type="button"
                       onClick={() => alert("Social GitHub login is configured via Supabase Auth.")}
-                      className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition"
+                      className="flex items-center justify-center gap-2 rounded-xl border border-slate-200 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
                     >
-                      <Github size={16} className="text-slate-900" />
+                      <Github size={16} className="text-slate-900 dark:text-white" />
                       <span>GitHub</span>
                     </button>
                   </div>
