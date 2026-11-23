@@ -13,6 +13,49 @@ import GlassShell from "@/components/dashboard/GlassShell";
 
 const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
+function CourseProgressCircle({ pct }: { pct: number }) {
+  const radius = 17;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (pct / 100) * circumference;
+
+  return (
+    <div
+      className="absolute right-2 top-2 z-10 grid h-14 w-14 place-items-center rounded-full border border-white/30 bg-slate-950/75 shadow-lg backdrop-blur-sm"
+      aria-label={`${pct}% course completed`}
+    >
+      <svg
+        viewBox="0 0 44 44"
+        className="absolute inset-0 h-full w-full -rotate-90"
+      >
+        <circle
+          cx="22"
+          cy="22"
+          r={radius}
+          fill="none"
+          stroke="rgba(255,255,255,0.25)"
+          strokeWidth="4"
+        />
+        <circle
+          cx="22"
+          cy="22"
+          r={radius}
+          fill="none"
+          stroke="#60a5fa"
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          className="transition-all duration-700"
+        />
+      </svg>
+
+      <span className="relative text-xs font-extrabold text-white">
+        {pct}%
+      </span>
+    </div>
+  );
+}
+
 export default async function Dashboard() {
   const { sb, user, profile } = await requireRole([
     "student",
@@ -99,9 +142,6 @@ export default async function Dashboard() {
   const cardClass =
     "rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md dark:border-slate-700 dark:bg-slate-800";
 
-  const headingClass =
-    "font-bold text-slate-900 dark:text-slate-100";
-
   const mutedClass =
     "text-slate-600 dark:text-slate-300";
 
@@ -155,7 +195,7 @@ export default async function Dashboard() {
           </div>
         </div>
 
-        {/* Weekly Activity */}
+        {/* Weekly Activity - Horizontal Chart */}
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800 sm:p-8">
           <div className="mb-6 flex items-center justify-between gap-3">
             <div>
@@ -240,6 +280,9 @@ export default async function Dashboard() {
                         fill
                         className="object-cover"
                       />
+
+                      {/* Circular Course Progress */}
+                      <CourseProgressCircle pct={c.pct} />
                     </div>
 
                     <div className="min-w-0">
@@ -255,18 +298,9 @@ export default async function Dashboard() {
                         {c.done} of {c.total} lessons completed
                       </p>
 
-                      <div className="mt-3 flex w-48 items-center gap-3 sm:w-64">
-                        <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
-                          <div
-                            className="h-full rounded-full bg-blue-600 transition-all duration-500"
-                            style={{ width: `${c.pct}%` }}
-                          />
-                        </div>
-
-                        <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                          {c.pct}%
-                        </span>
-                      </div>
+                      <p className="mt-2 text-xs font-bold text-blue-700 dark:text-blue-300">
+                        {c.pct}% completed
+                      </p>
                     </div>
                   </div>
 
