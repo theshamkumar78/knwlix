@@ -15,16 +15,14 @@ export const metadata: Metadata = {
 
 const themeScript = `
   try {
-    const s = localStorage.getItem('knowlix-theme');
+    const savedTheme = localStorage.getItem("knowlix-theme");
+    const isDark =
+      savedTheme === "dark" ||
+      (!savedTheme &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
 
-    if (
-      s === 'dark' ||
-      (!s && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    document.documentElement.classList.toggle("dark", isDark);
+    document.documentElement.style.colorScheme = isDark ? "dark" : "light";
   } catch (_) {}
 `;
 
@@ -39,7 +37,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
 
-      <body className="font-sans flex min-h-screen flex-col antialiased bg-[#f8fafc] text-slate-900 dark:bg-[#0b1329] dark:text-slate-100 transition-colors duration-200">
+      <body className="font-sans flex min-h-screen flex-col antialiased theme-page transition-colors duration-200">
         <ToastProvider>
           <FormGuard />
           <Navbar />

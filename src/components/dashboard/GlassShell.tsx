@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -69,16 +70,19 @@ export default function GlassShell({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#f4f7fb] text-slate-900 dark:bg-[#070e1e] dark:text-slate-100 flex flex-col md:flex-row transition-colors">
-      {/* Mobile Top Bar (Visible only on mobile screens < 768px) */}
+    <div className="min-h-screen theme-page flex flex-col md:flex-row transition-colors duration-200">
+
+      {/* Mobile Top Bar */}
       <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-slate-800 bg-[#072346] px-4 md:hidden">
         <Link href="/" prefetch={true} className="flex items-center gap-2">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-blue-600 text-white shadow-xs">
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-blue-600 text-white shadow-sm">
             <GraduationCap size={18} />
           </span>
+
           <span className="text-xl font-black text-white">
             Knowl<span className="text-blue-400">ix</span>
           </span>
+
           <span className="rounded-full bg-blue-500/20 px-2 py-0.5 text-[10px] font-bold uppercase text-blue-300">
             {variant}
           </span>
@@ -86,6 +90,7 @@ export default function GlassShell({
 
         <div className="flex items-center gap-2">
           <ThemeToggle className="h-8 w-8 text-xs" />
+
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -97,7 +102,7 @@ export default function GlassShell({
         </div>
       </header>
 
-      {/* Mobile Slide-down Navigation Menu */}
+      {/* Mobile Navigation */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -109,29 +114,34 @@ export default function GlassShell({
             <nav className="space-y-1">
               {items.map(({ key, href, label, icon: Icon }) => {
                 const isActive = active === key;
+
                 return (
                   <Link
                     key={key}
                     href={href}
                     prefetch={true}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition ${
+                    className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
                       isActive
                         ? "bg-blue-600 text-white shadow-md shadow-blue-600/30"
                         : "text-slate-300 hover:bg-white/10 hover:text-white"
                     }`}
                   >
-                    <Icon size={18} className={isActive ? "text-white" : "text-slate-400"} />
+                    <Icon
+                      size={18}
+                      className={isActive ? "text-white" : "text-slate-400"}
+                    />
                     <span>{label}</span>
                   </Link>
                 );
               })}
             </nav>
+
             <div className="mt-4 border-t border-white/10 pt-3">
               <form action={signOut}>
                 <button
                   type="submit"
-                  className="flex w-full items-center gap-3 px-3 py-2 text-sm font-semibold text-rose-300 hover:bg-rose-500/20 rounded-xl"
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-rose-300 hover:bg-rose-500/20"
                 >
                   <LogOut size={16} />
                   <span>Logout</span>
@@ -142,33 +152,34 @@ export default function GlassShell({
         )}
       </AnimatePresence>
 
-      {/* Desktop Royal Navy Sidebar (hidden on mobile, sticky on md+) */}
-      <aside className="hidden md:flex w-64 shrink-0 bg-[#072346] dark:bg-[#051429] text-white flex-col justify-between p-5 border-r border-slate-800 shadow-xl md:sticky md:top-0 md:h-screen">
+      {/* Desktop Sidebar */}
+      <aside className="hidden w-64 shrink-0 flex-col justify-between border-r border-slate-800 bg-[#072346] p-5 text-white shadow-xl dark:bg-[#051429] md:sticky md:top-0 md:flex md:h-screen">
+
         <div>
-          {/* Knowlix Logo */}
           <Link
             href="/"
             prefetch={true}
-            className="flex items-center gap-3 px-3 py-4 rounded-xl hover:opacity-90 transition mb-6"
+            className="mb-6 flex items-center gap-3 rounded-xl px-3 py-4 transition hover:opacity-90"
           >
             <span className="grid h-10 w-10 place-items-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-600/30">
               <GraduationCap size={24} />
             </span>
+
             <span className="text-2xl font-black tracking-tight text-white">
               Knowl<span className="text-blue-400">ix</span>
             </span>
           </Link>
 
-          {/* Navigation Links */}
           <nav className="space-y-1.5" aria-label="Dashboard Menu">
             {items.map(({ key, href, label, icon: Icon }) => {
               const isActive = active === key;
+
               return (
                 <Link
                   key={key}
                   href={href}
                   prefetch={true}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition ${
+                  className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition ${
                     isActive
                       ? "bg-blue-600 text-white shadow-md shadow-blue-600/25"
                       : "text-slate-300 hover:bg-white/10 hover:text-white"
@@ -185,17 +196,18 @@ export default function GlassShell({
           </nav>
         </div>
 
-        {/* Bottom Section: Theme Toggle + Logout */}
-        <div className="pt-6 border-t border-white/10 mt-6 space-y-3">
+        {/* Theme Toggle + Logout */}
+        <div className="mt-6 space-y-3 border-t border-white/10 pt-6">
           <div className="flex items-center justify-between px-3.5 py-1 text-xs text-slate-400">
             <span>Theme Mode</span>
-            <ThemeToggle className="h-8 w-8 text-xs bg-slate-800 border-slate-700 text-slate-300" />
+
+            <ThemeToggle className="h-8 w-8 border-slate-700 bg-slate-800 text-slate-300" />
           </div>
 
           <form action={signOut}>
             <button
               type="submit"
-              className="flex w-full items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-300 hover:bg-rose-500/20 hover:text-rose-300 transition"
+              className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-300 transition hover:bg-rose-500/20 hover:text-rose-300"
             >
               <LogOut size={18} />
               <span>Logout</span>
@@ -204,9 +216,9 @@ export default function GlassShell({
         </div>
       </aside>
 
-      {/* Main Canvas Area */}
-      <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 overflow-x-hidden">
-        <div className="max-w-6xl mx-auto w-full">
+      {/* Main Content */}
+      <main className="min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 lg:p-8">
+        <div className="mx-auto w-full max-w-6xl">
           {children}
         </div>
       </main>

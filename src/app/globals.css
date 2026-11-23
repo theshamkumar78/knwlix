@@ -176,3 +176,67 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* =========================================
+   KNOWLIX GLOBAL THEME SYSTEM
+========================================= */
+
+:root {
+  color-scheme: light;
+  --page-bg: #f8fafc;
+  --surface-bg: #ffffff;
+  --surface-secondary: #f1f5f9;
+  --primary-text: #0f172a;
+  --secondary-text: #475569;
+  --muted-text: #64748b;
+  --border-color: #e2e8f0;
+}
+
+html.dark {
+  color-scheme: dark;
+  --page-bg: #0b1329;
+  --surface-bg: #111c35;
+  --surface-secondary: #17243e;
+  --primary-text: #f1f5f9;
+  --secondary-text: #cbd5e1;
+  --muted-text: #94a3b8;
+  --border-color: #293956;
+}
+
+body.theme-page {
+  background-color: var(--page-bg);
+  color: var(--primary-text);
+}
+
+.theme-surface {
+  background-color: var(--surface-bg);
+  color: var(--primary-text);
+  border: 1px solid var(--border-color);
+}
+
+.theme-secondary {
+  background-color: var(--surface-secondary);
+  color: var(--primary-text);
+}
+
+.theme-text {
+  color: var(--primary-text);
+}
+
+.theme-muted {
+  color: var(--muted-text);
+}
+
+.theme-border {
+  border-color: var(--border-color);
+}
+
+.theme-input {
+  background-color: var(--surface-bg);
+  color: var(--primary-text);
+  border: 1px solid var(--border-color);
+}
+
+.theme-input::placeholder {
+  color: var(--muted-text);
+}
