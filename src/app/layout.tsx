@@ -6,6 +6,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { ToastProvider } from "@/components/ui/Toast";
 import FormGuard from "@/components/FormGuard";
+import IntroScreen from "@/components/IntroScreen";
 
 export const metadata: Metadata = {
   title: "Knowlix — Learn. Explore. Achieve.",
@@ -39,7 +40,9 @@ export default function RootLayout({
 
       <body className="font-sans flex min-h-screen flex-col antialiased theme-page transition-colors duration-200">
         <ToastProvider>
+          <IntroScreen />
           <FormGuard />
+
           <Navbar />
 
           <main className="flex-1">
