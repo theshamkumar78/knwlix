@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import Image from "next/image";
 import HeroSlider from "@/components/HeroSlider";
@@ -58,7 +59,7 @@ export default async function Home() {
 
   if (supabaseConfigured()) {
     const sb = await createClient();
-    // sab kaam saath saath (parallel)
+
     const [{ profile }, featured, rev] = await Promise.all([
       getCurrentUser(),
       sb.from("courses").select("*, profiles(full_name)").eq("status", "published").order("created_at", { ascending: false }).limit(6),
@@ -69,6 +70,7 @@ export default async function Home() {
         .order("created_at", { ascending: false })
         .limit(3),
     ]);
+
     role = profile?.role ?? null;
     courses = (featured.data as Course[]) ?? [];
     reviews = ((rev.data as any[]) ?? []).filter((r) => String(r.review_text ?? "").trim().length > 0);
@@ -76,7 +78,8 @@ export default async function Home() {
 
   const ctaHref = role === "instructor" ? "/instructor" : role === "admin" ? "/admin" : role === "student" ? "/dashboard/courses" : "/signup";
   const ctaLabel = role ? "Go to my dashboard" : "Create free account";
-  const card = "rounded-2xl border border-slate-200 bg-white p-6 shadow-sm";
+
+  const card = "rounded-2xl border border-slate-200 bg-white p-6 text-slate-900 shadow-sm transition-colors dark:border-slate-700 dark:bg-slate-800 dark:text-white";
 
   return (
     <>
@@ -88,23 +91,25 @@ export default async function Home() {
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">About Knowlix</p>
             <h2 className="section-title mt-2">Simple, accessible and skill-based learning</h2>
-            <p className="mt-4 leading-relaxed text-slate-600">
+            <p className="mt-4 leading-relaxed text-slate-600 dark:text-slate-300">
               Knowlix is an online learning platform designed to make education simple, accessible and effective. Our goal is to help students and learners develop knowledge and practical skills through quality online courses.
             </p>
-            <Link href="/about" className="mt-6 inline-flex items-center gap-2 font-semibold text-blue-600">
+            <Link href="/about" className="mt-6 inline-flex items-center gap-2 font-semibold text-blue-600 dark:text-blue-400">
               Read more about us <ArrowRight size={16} />
             </Link>
           </div>
+
           <div className="grid gap-4 sm:grid-cols-2">
             <div className={card}>
               <span className="grid h-11 w-11 place-items-center rounded-xl bg-blue-50 text-blue-600"><Target size={22} /></span>
-              <h3 className="mt-4 font-bold">Our mission</h3>
-              <p className="mt-1 text-sm text-slate-600">To provide simple, accessible and skill-based online education.</p>
+              <h3 className="mt-4 font-bold text-slate-900 dark:text-white">Our mission</h3>
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">To provide simple, accessible and skill-based online education.</p>
             </div>
+
             <div className={card}>
               <span className="grid h-11 w-11 place-items-center rounded-xl bg-violet-50 text-violet-600"><Eye size={22} /></span>
-              <h3 className="mt-4 font-bold">Our vision</h3>
-              <p className="mt-1 text-sm text-slate-600">To become a trusted platform for digital learning and professional development.</p>
+              <h3 className="mt-4 font-bold text-slate-900 dark:text-white">Our vision</h3>
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">To become a trusted platform for digital learning and professional development.</p>
             </div>
           </div>
         </div>
@@ -113,20 +118,22 @@ export default async function Home() {
       {/* Categories */}
       <section className="mx-auto max-w-7xl px-4 pb-16">
         <h2 id="categories" className="section-title scroll-mt-28">Popular categories</h2>
-        <p className="mt-2 text-slate-600">Pick a topic and start learning today.</p>
+        <p className="mt-2 text-slate-600 dark:text-slate-300">Pick a topic and start learning today.</p>
+
         <div className="mt-8 grid items-center gap-8 lg:grid-cols-[1.1fr_1fr]">
           <div className="aurora rounded-3xl p-3 shadow-xl">
             <Image src="/images/category-banners.jpeg" alt="Knowlix subject areas" width={1600} height={900} sizes="(min-width: 1024px) 55vw, 100vw" className="h-auto w-full rounded-2xl" />
           </div>
+
           <div className="grid grid-cols-2 gap-3">
             {subjects.map(({ name, icon: Icon, tone }) => (
               <Link
                 key={name}
                 href={`/courses?category=${encodeURIComponent(name)}`}
-                className="group flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                className="group flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3 text-slate-800 shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:text-blue-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:border-blue-500 dark:hover:text-blue-400"
               >
                 <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl ${tone}`}><Icon size={20} /></span>
-                <span className="text-sm font-semibold leading-tight group-hover:text-blue-600">{name}</span>
+                <span className="text-sm font-semibold leading-tight">{name}</span>
               </Link>
             ))}
           </div>
@@ -134,23 +141,24 @@ export default async function Home() {
       </section>
 
       {/* Featured courses */}
-      <section className="bg-white py-16">
+      <section className="bg-white py-16 transition-colors dark:bg-slate-900">
         <div className="mx-auto max-w-7xl px-4">
           <div className="flex items-end justify-between gap-4">
             <div>
               <h2 className="section-title">Featured courses</h2>
-              <p className="mt-2 text-slate-600">Fresh courses from our instructors.</p>
+              <p className="mt-2 text-slate-600 dark:text-slate-300">Fresh courses from our instructors.</p>
             </div>
-            <Link href="/courses" className="hidden items-center gap-1 font-semibold text-blue-600 md:flex">
+            <Link href="/courses" className="hidden items-center gap-1 font-semibold text-blue-600 dark:text-blue-400 md:flex">
               View all <ArrowRight size={16} />
             </Link>
           </div>
+
           {courses.length ? (
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {courses.map((c) => <CourseCard key={c.id} c={c} />)}
             </div>
           ) : (
-            <p className="mt-8 rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500">No published courses yet.</p>
+            <p className="mt-8 rounded-2xl border border-dashed border-slate-300 p-10 text-center text-slate-500 dark:border-slate-700 dark:text-slate-400">No published courses yet.</p>
           )}
         </div>
       </section>
@@ -159,28 +167,30 @@ export default async function Home() {
       <section className="mx-auto max-w-7xl px-4 py-16">
         <p className="text-center text-xs font-bold uppercase tracking-[0.2em] text-blue-600">Why choose Knowlix?</p>
         <h2 className="section-title mt-2 text-center">Why learn with us</h2>
+
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {why.map(({ icon: Icon, title, text }) => (
-            <div key={title} className={`${card} transition hover:-translate-y-1 hover:shadow-md`}>
+            <div key={title} className={`${card} hover:-translate-y-1 hover:shadow-md`}>
               <span className="grid h-12 w-12 place-items-center rounded-xl bg-blue-50 text-blue-600"><Icon size={24} /></span>
               <h3 className="mt-4 font-bold">{title}</h3>
-              <p className="mt-1 text-sm text-slate-600">{text}</p>
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{text}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* How it works */}
-      <section className="bg-white py-16">
+      <section className="bg-white py-16 transition-colors dark:bg-slate-900">
         <div className="mx-auto max-w-7xl px-4">
           <h2 className="section-title text-center">How Knowlix works</h2>
+
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map(({ icon: Icon, title, text }, i) => (
-              <div key={title} className="relative rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center">
+              <div key={title} className="relative rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center text-slate-900 transition-colors dark:border-slate-700 dark:bg-slate-800 dark:text-white">
                 <span className="absolute -top-4 left-1/2 grid h-8 w-8 -translate-x-1/2 place-items-center rounded-full bg-blue-600 text-sm font-bold text-white">{i + 1}</span>
                 <span className="mx-auto mt-2 grid h-14 w-14 place-items-center rounded-2xl bg-blue-100 text-blue-600"><Icon size={28} /></span>
                 <h3 className="mt-4 font-bold">{title}</h3>
-                <p className="mt-1 text-sm text-slate-600">{text}</p>
+                <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{text}</p>
               </div>
             ))}
           </div>
@@ -190,14 +200,15 @@ export default async function Home() {
       {/* Student learning experience */}
       <section className="mx-auto max-w-7xl px-4 py-16">
         <h2 className="section-title text-center">Your learning experience</h2>
-        <p className="mx-auto mt-2 max-w-xl text-center text-slate-600">Everything you need to learn, track and finish a course.</p>
+        <p className="mx-auto mt-2 max-w-xl text-center text-slate-600 dark:text-slate-300">Everything you need to learn, track and finish a course.</p>
+
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {experience.map(({ icon: Icon, title, text }) => (
-            <div key={title} className="flex gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <div key={title} className="flex gap-4 rounded-2xl border border-slate-200 bg-white p-5 text-slate-900 shadow-sm transition-colors dark:border-slate-700 dark:bg-slate-800 dark:text-white">
               <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-blue-50 text-blue-600"><Icon size={22} /></span>
               <div>
                 <h3 className="font-bold">{title}</h3>
-                <p className="mt-1 text-sm text-slate-600">{text}</p>
+                <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{text}</p>
               </div>
             </div>
           ))}
@@ -218,6 +229,7 @@ export default async function Home() {
               <Link href="/contact" className="rounded-xl border border-white/30 px-5 py-3 text-sm font-bold">Contact us to teach</Link>
             </div>
           </div>
+
           <ul className="grid gap-3 sm:grid-cols-2">
             {["Create courses and lessons", "Add videos and notes", "Submit for admin review", "See enrolled students"].map((t) => (
               <li key={t} className="flex items-center gap-3 rounded-2xl bg-white/10 p-4 text-sm font-semibold">
@@ -228,7 +240,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Testimonials: sirf asli reviews ho to dikhta hai */}
+      {/* Testimonials */}
       {reviews.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 py-16">
           <h2 className="section-title text-center">What students say</h2>
@@ -240,10 +252,10 @@ export default async function Home() {
                     <Star key={n} size={16} fill={n < r.rating ? "currentColor" : "none"} />
                   ))}
                 </div>
-                <blockquote className="mt-3 text-sm leading-relaxed text-slate-700">“{r.review_text}”</blockquote>
+                <blockquote className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">“{r.review_text}”</blockquote>
                 <figcaption className="mt-4 text-sm font-bold">
                   {r.profiles?.full_name ?? "Knowlix student"}
-                  <span className="block text-xs font-normal text-slate-500">{r.courses?.title}</span>
+                  <span className="block text-xs font-normal text-slate-500 dark:text-slate-400">{r.courses?.title}</span>
                 </figcaption>
               </figure>
             ))}
@@ -256,17 +268,18 @@ export default async function Home() {
         <h2 className="section-title text-center">Frequently asked questions</h2>
         <div className="mt-8 space-y-3">
           {FAQS.slice(0, 4).map((f) => (
-            <details key={f.q} className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <details key={f.q} className="group rounded-2xl border border-slate-200 bg-white p-5 text-slate-900 shadow-sm transition-colors dark:border-slate-700 dark:bg-slate-800 dark:text-white">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-bold">
                 {f.q}
                 <ChevronDown size={18} className="shrink-0 text-slate-400 transition group-open:rotate-180" />
               </summary>
-              <p className="mt-3 text-sm leading-relaxed text-slate-600">{f.a}</p>
+              <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{f.a}</p>
             </details>
           ))}
         </div>
+
         <p className="mt-6 text-center">
-          <Link href="/faq" className="inline-flex items-center gap-1 font-semibold text-blue-600">See all questions <ArrowRight size={16} /></Link>
+          <Link href="/faq" className="inline-flex items-center gap-1 font-semibold text-blue-600 dark:text-blue-400">See all questions <ArrowRight size={16} /></Link>
         </p>
       </section>
 
