@@ -5,10 +5,10 @@ import { requireRole } from "@/lib/auth";
 import GlassShell from "@/components/dashboard/GlassShell";
 
 const badgeTone: Record<string, string> = {
-  draft: "bg-slate-100 text-slate-700",
-  pending: "bg-amber-100 text-amber-800",
-  published: "bg-emerald-100 text-emerald-800",
-  rejected: "bg-rose-100 text-rose-800",
+  draft: "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200",
+  pending: "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300",
+  published: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300",
+  rejected: "bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300",
 };
 
 const filters = [
@@ -41,8 +41,8 @@ export default async function InstructorCourses({
       <div className="space-y-6">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">My Courses</h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">My Courses</h1>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               Manage your curriculum, edit lessons, and track student enrollments.
             </p>
           </div>
@@ -68,7 +68,7 @@ export default async function InstructorCourses({
               className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
                 (status ?? "") === f.value
                   ? "bg-blue-600 text-white shadow-sm"
-                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
               }`}
             >
               {f.label}
@@ -82,9 +82,9 @@ export default async function InstructorCourses({
               <Link
                 key={c.id}
                 href={`/instructor/courses/${c.id}`}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm hover:shadow-md transition hover:-translate-y-1"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm hover:shadow-md transition hover:-translate-y-1 dark:border-slate-800 dark:bg-slate-800/90"
               >
-                <div className="relative aspect-video bg-slate-100 overflow-hidden">
+                <div className="relative aspect-video bg-slate-100 dark:bg-slate-900 overflow-hidden">
                   <Image
                     src={c.thumbnail_url ?? "/images/category-banners.jpeg"}
                     alt={c.title}
@@ -105,18 +105,18 @@ export default async function InstructorCourses({
 
                 <div className="p-5 flex flex-1 flex-col justify-between">
                   <div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                       {c.category ?? "General"}
                     </span>
-                    <h3 className="line-clamp-2 font-bold text-slate-900 text-base mt-1 group-hover:text-blue-600 transition">
+                    <h3 className="line-clamp-2 font-bold text-slate-900 dark:text-white text-base mt-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
                       {c.title}
                     </h3>
-                    <p className="mt-1 text-xs capitalize text-slate-500">
+                    <p className="mt-1 text-xs capitalize text-slate-500 dark:text-slate-400">
                       Level: {c.level}
                     </p>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-600">
+                  <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between text-xs font-bold text-blue-600 dark:text-blue-400">
                     <span>Manage Course</span>
                     <ArrowRight size={14} className="group-hover:translate-x-1 transition" />
                   </div>
@@ -125,7 +125,7 @@ export default async function InstructorCourses({
             ))}
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500">
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500 dark:border-slate-800 dark:bg-slate-800/50 dark:text-slate-400">
             No courses found under this filter.
           </div>
         )}

@@ -6,7 +6,7 @@ import { updateLesson } from "../../../../actions";
 import GlassShell from "@/components/dashboard/GlassShell";
 
 const field =
-  "mt-1 w-full rounded-2xl bg-white/10 px-4 py-3 text-sm text-white placeholder-white/50 outline-none ring-1 ring-white/15 focus:ring-2 focus:ring-white/50";
+  "mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900/60 dark:text-white dark:placeholder-slate-500 dark:focus:border-blue-400 dark:focus:bg-slate-900";
 
 export default async function EditLesson({ params }: { params: Promise<{ id: string; lessonId: string }> }) {
   const { id, lessonId } = await params;
@@ -22,28 +22,28 @@ export default async function EditLesson({ params }: { params: Promise<{ id: str
   return (
     <GlassShell active="courses" variant="instructor">
       <div className="mx-auto max-w-2xl space-y-6">
-        <Link href={`/instructor/courses/${id}`} className="inline-flex items-center gap-1 text-sm text-white/70 hover:text-white">
-          <ArrowLeft size={16} /> {course.title}
+        <Link href={`/instructor/courses/${id}`} className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">
+          <ArrowLeft size={14} /> Back to {course.title}
         </Link>
-        <h1 className="text-3xl font-extrabold">Edit lesson</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Edit Lesson</h1>
 
-        <form action={updateLesson.bind(null, lessonId, id)} className="glass space-y-5 p-6">
-          <label className="block text-sm">Lesson title
+        <form action={updateLesson.bind(null, lessonId, id)} className="space-y-5 rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm dark:border-slate-800 dark:bg-slate-800/90">
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Lesson title
             <input name="title" defaultValue={lesson.title} required className={field} />
           </label>
-          <label className="block text-sm">Module
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Module
             <input name="module_title" list="modules" defaultValue={lesson.module_title ?? ""} placeholder="e.g. Module 1: HTML" className={field} />
             <datalist id="modules">{modules.map((m) => <option key={m} value={m} />)}</datalist>
           </label>
-          <label className="block text-sm">Video link (YouTube)
-            <input name="video_url" defaultValue={lesson.video_url ?? ""} className={field} />
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Video link (YouTube)
+            <input name="video_url" defaultValue={lesson.video_url ?? ""} placeholder="https://www.youtube.com/watch?v=..." className={field} />
           </label>
-          <label className="block text-sm">Lesson text
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Lesson text
             <textarea name="content" rows={5} defaultValue={lesson.content ?? ""} className={field} />
           </label>
-          <div className="flex gap-3">
-            <button className="rounded-full bg-amber-400 px-6 py-3 text-sm font-bold text-amber-950 transition hover:-translate-y-0.5">Save lesson</button>
-            <Link href={`/instructor/courses/${id}`} className="rounded-full bg-white/15 px-6 py-3 text-sm font-semibold transition hover:bg-white/25">Cancel</Link>
+          <div className="flex flex-wrap items-center gap-3 pt-2">
+            <button className="rounded-xl bg-blue-600 px-6 py-2.5 text-xs font-bold text-white shadow-md shadow-blue-600/20 hover:bg-blue-700 transition">Save Lesson</button>
+            <Link href={`/instructor/courses/${id}`} className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 transition">Cancel</Link>
           </div>
         </form>
       </div>

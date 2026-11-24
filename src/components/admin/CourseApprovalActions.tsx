@@ -52,7 +52,7 @@ export default function CourseApprovalActions({
           type="button"
           disabled={isPending}
           onClick={handleApprove}
-          className="inline-flex min-h-[38px] items-center gap-1.5 rounded-full bg-emerald-400 px-4 py-1.5 text-xs font-bold text-emerald-950 transition hover:bg-emerald-300 disabled:opacity-50"
+          className="inline-flex min-h-[38px] items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 transition disabled:opacity-50"
         >
           <Check size={14} /> Approve
         </button>
@@ -61,7 +61,7 @@ export default function CourseApprovalActions({
           type="button"
           disabled={isPending}
           onClick={() => setRejecting(!rejecting)}
-          className="inline-flex min-h-[38px] items-center gap-1.5 rounded-full bg-rose-400/20 px-4 py-1.5 text-xs font-bold text-rose-200 transition hover:bg-rose-400/30 disabled:opacity-50"
+          className="inline-flex min-h-[38px] items-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-1.5 text-xs font-bold text-rose-700 hover:bg-rose-100 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300 dark:hover:bg-rose-950/70 transition disabled:opacity-50"
         >
           <X size={14} /> {rejecting ? "Cancel" : "Reject"}
         </button>

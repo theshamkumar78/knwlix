@@ -7,7 +7,7 @@ import { getCurrentUser } from "@/lib/session";
 import { enrollWithDetails } from "../actions";
 
 const field =
-  "mt-1 w-full rounded-2xl bg-white/10 px-4 py-3 text-sm text-white placeholder-white/50 outline-none ring-1 ring-white/15 focus:ring-2 focus:ring-white/50";
+  "mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20 dark:border-slate-700 dark:bg-slate-900/60 dark:text-white dark:placeholder-slate-500 dark:focus:border-blue-400 dark:focus:bg-slate-900";
 
 export default async function EnrollPage({
   params,
@@ -69,10 +69,10 @@ export default async function EnrollPage({
     .maybeSingle();
 
   return (
-    <section className="aurora min-h-[calc(100vh-4rem)] px-4 py-10 text-white">
+    <section className="ed-canvas min-h-[calc(100vh-4rem)] px-4 py-10">
       <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[1fr_1.3fr]">
-        <aside className="glass h-fit p-4">
-          <div className="relative aspect-video overflow-hidden rounded-2xl bg-white/10">
+        <aside className="h-fit rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-800/90">
+          <div className="relative aspect-video overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-900">
             <Image
               src={course.thumbnail_url ?? "/images/category-banners.jpeg"}
               alt={course.title}
@@ -82,16 +82,16 @@ export default async function EnrollPage({
             />
           </div>
 
-          <div className="p-3">
-            <p className="text-xs text-white/60">
+          <div className="pt-4">
+            <p className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
               You are enrolling in
             </p>
 
-            <h1 className="mt-1 text-xl font-extrabold">
+            <h1 className="mt-1.5 text-xl font-extrabold text-slate-900 dark:text-white">
               {course.title}
             </h1>
 
-            <p className="mt-1 text-sm capitalize text-white/70">
+            <p className="mt-1 text-sm capitalize text-slate-600 dark:text-slate-300">
               {(course.profiles as any)?.full_name ?? "Knowlix instructor"}
               {" · "}
               {course.level}
@@ -102,19 +102,19 @@ export default async function EnrollPage({
 
         <form
           action={enrollWithDetails.bind(null, course.id, slug)}
-          className="glass space-y-5 p-6"
+          className="space-y-5 rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm dark:border-slate-800 dark:bg-slate-800/90"
         >
           <div>
-            <h2 className="text-2xl font-extrabold">
+            <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">
               Tell us about yourself
             </h2>
 
-            <p className="mt-1 text-sm text-white/70">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               These details become your student profile.
             </p>
           </div>
 
-          <label className="block text-sm">
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
             Full name *
             <input
               name="full_name"
@@ -126,7 +126,7 @@ export default async function EnrollPage({
           </label>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="block text-sm">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
               Phone
               <input
                 name="phone"
@@ -137,7 +137,7 @@ export default async function EnrollPage({
               />
             </label>
 
-            <label className="block text-sm">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
               City
               <input
                 name="city"
@@ -147,12 +147,12 @@ export default async function EnrollPage({
             </label>
           </div>
 
-          <label className="block text-sm">
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
             Education level
             <select
               name="education"
               defaultValue={sp?.education ?? ""}
-              className={`${field} [&>option]:text-slate-900`}
+              className={`${field} [&>option]:bg-white [&>option]:text-slate-900 dark:[&>option]:bg-slate-800 dark:[&>option]:text-white`}
             >
               <option value="">Select</option>
               <option>School student</option>
@@ -163,7 +163,7 @@ export default async function EnrollPage({
             </select>
           </label>
 
-          <label className="block text-sm">
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
             Why do you want to take this course?
             <textarea
               name="goal"
@@ -173,12 +173,12 @@ export default async function EnrollPage({
             />
           </label>
 
-          <p className="flex items-start gap-2 text-xs text-white/60">
-            <ShieldCheck size={16} className="mt-0.5 shrink-0" />
+          <p className="flex items-start gap-2 text-xs text-slate-500 dark:text-slate-400">
+            <ShieldCheck size={16} className="mt-0.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
             Your name and these details are visible to the course instructor and admins only.
           </p>
 
-          <button className="w-full rounded-full bg-amber-400 py-3 text-sm font-bold text-amber-950 transition hover:-translate-y-0.5">
+          <button className="btn btn-primary w-full py-3.5 text-base font-bold text-white shadow-lg shadow-blue-600/20">
             Confirm enrollment
           </button>
         </form>

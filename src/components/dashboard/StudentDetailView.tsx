@@ -52,67 +52,67 @@ export default async function StudentDetailView({
 
   return (
     <div className="space-y-6">
-      <Link href={back} className="inline-flex items-center gap-1 text-sm text-white/70 hover:text-white">
-        <ArrowLeft size={16} /> Students
+      <Link href={back} className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition">
+        <ArrowLeft size={14} /> Back to Students
       </Link>
 
-      <header className="glass flex items-center gap-4 p-6">
-        <span className="grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br from-teal-400 to-violet text-2xl font-bold">
+      <header className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm flex items-center gap-4 dark:border-slate-800 dark:bg-slate-800/90">
+        <span className="grid h-16 w-16 place-items-center rounded-2xl bg-blue-600 text-2xl font-bold text-white shadow-md shadow-blue-600/20">
           {name.charAt(0).toUpperCase()}
         </span>
         <div>
-          <h1 className="text-3xl font-extrabold">{name}</h1>
-          <p className="text-sm text-white/70">Joined {fmt(p.created_at)}</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">{name}</h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Joined {fmt(p.created_at)}</p>
         </div>
       </header>
 
-      <section className="glass p-6">
-        <h2 className="text-xl font-bold">Student details</h2>
+      <section className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-800/90">
+        <h2 className="text-lg font-bold text-slate-900 dark:text-white">Student Details</h2>
         {sp ? (
           <>
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
               {facts.map(({ icon: Icon, label, value }) => (
-                <div key={label} className="rounded-2xl bg-white/5 p-4">
-                  <p className="flex items-center gap-2 text-xs text-white/60"><Icon size={14} />{label}</p>
-                  <p className="mt-1 font-semibold">{value || "Not provided"}</p>
+                <div key={label} className="rounded-xl border border-slate-100 bg-slate-50 p-4 dark:border-slate-700/60 dark:bg-slate-900/60">
+                  <p className="flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"><Icon size={14} className="text-blue-600 dark:text-blue-400" />{label}</p>
+                  <p className="mt-1.5 font-bold text-slate-900 dark:text-white">{value || "Not provided"}</p>
                 </div>
               ))}
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl bg-white/5 p-4">
-                <p className="text-xs text-white/60">Learning goal</p>
-                <p className="mt-1 whitespace-pre-line text-sm">{sp.goal || "Not provided"}</p>
+              <div className="rounded-xl border border-slate-100 bg-slate-50 p-4 dark:border-slate-700/60 dark:bg-slate-900/60">
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Learning goal</p>
+                <p className="mt-1.5 whitespace-pre-line text-sm text-slate-700 dark:text-slate-200">{sp.goal || "Not provided"}</p>
               </div>
-              <div className="rounded-2xl bg-white/5 p-4">
-                <p className="text-xs text-white/60">About</p>
-                <p className="mt-1 whitespace-pre-line text-sm">{sp.bio || "Not provided"}</p>
+              <div className="rounded-xl border border-slate-100 bg-slate-50 p-4 dark:border-slate-700/60 dark:bg-slate-900/60">
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">About</p>
+                <p className="mt-1.5 whitespace-pre-line text-sm text-slate-700 dark:text-slate-200">{sp.bio || "Not provided"}</p>
               </div>
             </div>
           </>
         ) : (
-          <p className="mt-3 text-white/70">This student has not filled in their details yet.</p>
+          <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">This student has not filled in their details yet.</p>
         )}
       </section>
 
-      <section className="glass p-6">
-        <h2 className="text-xl font-bold">{instructorId ? "Enrolled in your courses" : "Enrolled courses"}</h2>
+      <section className="rounded-3xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-800/90">
+        <h2 className="text-lg font-bold text-slate-900 dark:text-white">{instructorId ? "Enrolled in your courses" : "Enrolled courses"}</h2>
         {rows.length ? (
           <ul className="mt-4 space-y-3">
             {rows.map((r: any) => (
-              <li key={r.key} className="grid items-center gap-3 rounded-2xl bg-white/5 p-4 md:grid-cols-[1.5fr_1.2fr_1.2fr]">
-                <span className="truncate font-medium">{r.title}</span>
+              <li key={r.key} className="grid items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 dark:border-slate-700/60 dark:bg-slate-900/60 p-4 md:grid-cols-[1.5fr_1.2fr_1.2fr]">
+                <span className="truncate font-semibold text-sm text-slate-900 dark:text-white">{r.title}</span>
                 <div>
-                  <div className="h-2 rounded-full bg-white/15">
-                    <div className="h-2 rounded-full bg-gradient-to-r from-teal-300 to-violet" style={{ width: `${r.pct}%` }} />
+                  <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                    <div className="h-2 rounded-full bg-blue-600 dark:bg-blue-500" style={{ width: `${r.pct}%` }} />
                   </div>
-                  <p className="mt-1 text-xs text-white/70">{r.done}/{r.total} lessons · {r.pct}%</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{r.done}/{r.total} lessons · {r.pct}%</p>
                 </div>
-                <p className="text-xs text-white/60 md:text-right">Enrolled {fmt(r.when)}</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 md:text-right">Enrolled {fmt(r.when)}</p>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="mt-3 text-white/70">Not enrolled in any course yet.</p>
+          <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">Not enrolled in any course yet.</p>
         )}
       </section>
     </div>

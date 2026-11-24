@@ -99,8 +99,8 @@ export default async function Students({
       <div className="space-y-6">
         <header className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Students & Enrollments</h1>
-            <p className="mt-1 text-sm text-slate-500">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">Students & Enrollments</h1>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               {displayRows.length} user{displayRows.length === 1 ? "" : "s"} shown ·{" "}
               {enr?.length ?? 0} total active enrollment{enr?.length === 1 ? "" : "s"}
             </p>
@@ -125,7 +125,7 @@ export default async function Students({
               className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
                 (enrolled ?? "") === f.value
                   ? "bg-blue-600 text-white shadow-sm"
-                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
               }`}
             >
               {f.label}
@@ -140,7 +140,7 @@ export default async function Students({
               const isActive = s.is_active !== false;
 
               return (
-                <article key={s.id} className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+                <article key={s.id} className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-800/90">
                   <div className="flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                       <span className="grid h-11 w-11 place-items-center rounded-2xl bg-blue-600 font-bold text-white shadow-md shadow-blue-600/20">
@@ -148,22 +148,22 @@ export default async function Students({
                       </span>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h2 className="font-bold text-slate-900 text-base">
+                          <h2 className="font-bold text-slate-900 dark:text-white text-base">
                             <Link
                               href={`/admin/students/${s.id}`}
-                              className="hover:text-blue-600 transition"
+                              className="hover:text-blue-600 dark:hover:text-blue-400 transition"
                             >
                               {name}
                             </Link>
                           </h2>
-                          <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-600 capitalize">
+                          <span className="rounded-md bg-slate-100 dark:bg-slate-700 px-2 py-0.5 text-[11px] font-bold text-slate-600 dark:text-slate-300 capitalize">
                             {s.role}
                           </span>
                           <span
                             className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
                               isActive
-                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                                : "bg-rose-50 text-rose-700 border border-rose-200"
+                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800"
+                                : "bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800"
                             }`}
                           >
                             {isActive ? (
@@ -177,7 +177,7 @@ export default async function Students({
                             )}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-400 mt-0.5">
+                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
                           {s.mine.length} course{s.mine.length === 1 ? "" : "s"}{" "}
                           enrolled
                         </p>
@@ -190,8 +190,8 @@ export default async function Students({
                           type="submit"
                           className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
                             isActive
-                              ? "border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100"
-                              : "border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                              ? "border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-300 dark:hover:bg-rose-950/70"
+                              : "border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-900/60 dark:bg-emerald-950/40 dark:text-emerald-300 dark:hover:bg-emerald-950/70"
                           }`}
                         >
                           {isActive ? "Deactivate" : "Activate"}
@@ -200,7 +200,7 @@ export default async function Students({
 
                       {s.role === "student" && (
                         <form action={setUserRole.bind(null, s.id, "instructor")}>
-                          <button className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition">
+                          <button className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-700/60 dark:text-slate-200 dark:hover:bg-slate-700 transition">
                             Make Instructor
                           </button>
                         </form>
@@ -209,27 +209,27 @@ export default async function Students({
                   </div>
 
                   {s.mine.length > 0 && (
-                    <ul className="mt-4 space-y-2 border-t border-slate-100 pt-3">
+                    <ul className="mt-4 space-y-2 border-t border-slate-100 dark:border-slate-800 pt-3">
                       {s.mine.map((m: any, i: number) => (
                         <li
                           key={i}
-                          className="grid items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 md:grid-cols-[1.5fr_1.2fr_1.2fr]"
+                          className="grid items-center gap-3 rounded-xl border border-slate-100 bg-slate-50 dark:border-slate-700/60 dark:bg-slate-900/60 px-4 py-3 md:grid-cols-[1.5fr_1.2fr_1.2fr]"
                         >
-                          <span className="truncate font-semibold text-xs text-slate-900">
+                          <span className="truncate font-semibold text-xs text-slate-900 dark:text-white">
                             {m.course}
                           </span>
                           <div>
-                            <div className="h-2 rounded-full bg-slate-200 overflow-hidden">
+                            <div className="h-2 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
                               <div
-                                className="h-2 rounded-full bg-blue-600"
+                                className="h-2 rounded-full bg-blue-600 dark:bg-blue-500"
                                 style={{ width: `${m.pct}%` }}
                               />
                             </div>
-                            <p className="mt-1 text-[11px] font-medium text-slate-500">
+                            <p className="mt-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">
                               {m.done}/{m.total} lessons · {m.pct}%
                             </p>
                           </div>
-                          <p className="text-[11px] text-slate-400 md:text-right">
+                          <p className="text-[11px] text-slate-400 dark:text-slate-500 md:text-right">
                             Enrolled {fmt(m.when)}
                           </p>
                         </li>
@@ -241,7 +241,7 @@ export default async function Students({
             })}
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500">
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500 dark:border-slate-800 dark:bg-slate-800/50 dark:text-slate-400">
             No students in this group.
           </div>
         )}

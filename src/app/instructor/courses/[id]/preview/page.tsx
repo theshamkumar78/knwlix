@@ -53,7 +53,7 @@ export default async function CourseStudentPreview({
   });
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0b1329] text-slate-900 dark:text-white">
       {/* Sticky Preview Mode Top Bar */}
       <div className="sticky top-0 z-50 flex flex-wrap items-center justify-between gap-4 bg-amber-400 px-4 py-3 text-amber-950 shadow-md">
         <div className="flex items-center gap-2 text-sm font-bold">
@@ -148,15 +148,15 @@ export default async function CourseStudentPreview({
       <div className="mx-auto max-w-6xl space-y-8 px-4 py-12 lg:max-w-3xl">
         {/* What You Will Learn Card */}
         {course.what_you_will_learn && course.what_you_will_learn.length > 0 && (
-          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-bold text-slate-900">
+          <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-800/90">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
               What you will learn
             </h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {course.what_you_will_learn.map((item: string, i: number) => (
                 <div key={i} className="flex items-start gap-2.5">
-                  <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 mt-0.5" />
-                  <span className="text-sm text-slate-700 leading-snug">
+                  <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5" />
+                  <span className="text-sm text-slate-700 dark:text-slate-200 leading-snug">
                     {item}
                   </span>
                 </div>
@@ -166,33 +166,33 @@ export default async function CourseStudentPreview({
         )}
 
         {/* About Course */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-slate-900">About this course</h2>
-          <p className="mt-3 whitespace-pre-line leading-relaxed text-slate-600">
+        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-800/90">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">About this course</h2>
+          <p className="mt-3 whitespace-pre-line leading-relaxed text-slate-600 dark:text-slate-300">
             {course.description || "No description provided yet."}
           </p>
         </section>
 
         {/* Curriculum Outline */}
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-5">
-          <h2 className="text-xl font-bold text-slate-900">Course Curriculum</h2>
+        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-5 dark:border-slate-800 dark:bg-slate-800/90">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white">Course Curriculum</h2>
           {count > 0 ? (
             <div className="space-y-4">
               {Array.from(modulesMap.entries()).map(([moduleName, moduleLessons]) => (
-                <div key={moduleName} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+                <div key={moduleName} className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-900/60">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-2">
                     {moduleName} ({moduleLessons?.length ?? 0} lessons)
                   </h3>
                   <ol className="space-y-2">
                     {(moduleLessons ?? []).map((l, i) => (
                       <li
                         key={l.id}
-                        className="flex items-center gap-3 rounded-lg bg-white p-3 border border-slate-100"
+                        className="flex items-center gap-3 rounded-lg bg-white p-3 border border-slate-100 dark:bg-slate-800 dark:border-slate-700/60"
                       >
-                        <span className="grid h-6 w-6 place-items-center rounded-full bg-brand/10 text-xs font-bold text-brand">
+                        <span className="grid h-6 w-6 place-items-center rounded-full bg-blue-100 text-xs font-bold text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
                           {i + 1}
                         </span>
-                        <span className="text-sm font-medium text-slate-800">
+                        <span className="text-sm font-medium text-slate-800 dark:text-slate-200">
                           {l.title}
                         </span>
                       </li>
@@ -202,7 +202,7 @@ export default async function CourseStudentPreview({
               ))}
             </div>
           ) : (
-            <p className="text-sm text-slate-500">No lessons created yet.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">No lessons created yet.</p>
           )}
         </section>
       </div>

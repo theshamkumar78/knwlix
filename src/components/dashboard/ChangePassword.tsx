@@ -58,8 +58,8 @@ export default function ChangePassword() {
   }
 
   return (
-    <form onSubmit={submit} className="glass space-y-5 p-6">
-      <h2 className="text-xl font-bold">Change password</h2>
+    <form onSubmit={submit} className="space-y-5 rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm dark:border-slate-800 dark:bg-slate-800/90">
+      <h2 className="text-xl font-bold text-slate-900 dark:text-white">Change password</h2>
 
       <div className="space-y-4">
         <div className="space-y-1.5">
@@ -82,14 +82,14 @@ export default function ChangePassword() {
           />
 
           {password.length > 0 && (
-            <div className="rounded-xl bg-white/5 p-3 space-y-1.5 text-xs text-white/70">
-              <p className="font-semibold text-white/90">
+            <div className="rounded-xl border border-slate-100 bg-slate-50 dark:border-slate-700/60 dark:bg-slate-900/60 p-3 space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
+              <p className="font-semibold text-slate-800 dark:text-slate-100">
                 Password requirements:
               </p>
               <ul className="space-y-1">
                 <li
                   className={`flex items-center gap-1.5 ${
-                    hasMinLength ? "text-emerald-300" : "text-white/50"
+                    hasMinLength ? "text-emerald-600 dark:text-emerald-400 font-semibold" : "text-slate-400 dark:text-slate-500"
                   }`}
                 >
                   {hasMinLength ? (
@@ -101,7 +101,7 @@ export default function ChangePassword() {
                 </li>
                 <li
                   className={`flex items-center gap-1.5 ${
-                    hasLetter ? "text-emerald-300" : "text-white/50"
+                    hasLetter ? "text-emerald-600 dark:text-emerald-400 font-semibold" : "text-slate-400 dark:text-slate-500"
                   }`}
                 >
                   {hasLetter ? (
@@ -113,7 +113,7 @@ export default function ChangePassword() {
                 </li>
                 <li
                   className={`flex items-center gap-1.5 ${
-                    hasNumber ? "text-emerald-300" : "text-white/50"
+                    hasNumber ? "text-emerald-600 dark:text-emerald-400 font-semibold" : "text-slate-400 dark:text-slate-500"
                   }`}
                 >
                   {hasNumber ? (
@@ -156,8 +156,8 @@ export default function ChangePassword() {
           role="alert"
           className={`rounded-2xl px-4 py-3 text-sm ${
             msg.ok
-              ? "bg-emerald-400/15 text-emerald-200"
-              : "bg-rose-400/15 text-rose-200"
+              ? "bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800"
+              : "bg-rose-50 text-rose-800 border border-rose-200 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800"
           }`}
         >
           {msg.text}
@@ -167,7 +167,7 @@ export default function ChangePassword() {
       <button
         type="submit"
         disabled={busy}
-        className="rounded-full bg-amber-400 px-6 py-3 text-sm font-bold text-amber-950 transition hover:-translate-y-0.5 disabled:opacity-60"
+        className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-md shadow-blue-600/20 hover:bg-blue-700 transition disabled:opacity-60"
       >
         {busy ? "Please wait…" : "Update password"}
       </button>

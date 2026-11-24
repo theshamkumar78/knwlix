@@ -4,10 +4,10 @@ import GlassShell from "@/components/dashboard/GlassShell";
 import CourseApprovalActions from "@/components/admin/CourseApprovalActions";
 
 const badgeTone: Record<string, string> = {
-  draft: "bg-slate-100 text-slate-700",
-  pending: "bg-amber-100 text-amber-800",
-  published: "bg-emerald-100 text-emerald-800",
-  rejected: "bg-rose-100 text-rose-800",
+  draft: "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-200",
+  pending: "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300",
+  published: "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300",
+  rejected: "bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300",
 };
 
 const filters = [
@@ -77,8 +77,8 @@ export default async function AdminCourses({
     <GlassShell active="courses" variant="admin">
       <div className="space-y-6">
         <header>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">All Courses</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">All Courses</h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             {rows.length} course{rows.length === 1 ? "" : "s"}
             {subject ? ` in “${subject}”` : ""}
           </p>
@@ -95,7 +95,7 @@ export default async function AdminCourses({
               className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
                 (status ?? "") === f.value && !subject
                   ? "bg-blue-600 text-white shadow-sm"
-                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
               }`}
             >
               {f.label}
@@ -104,7 +104,7 @@ export default async function AdminCourses({
           {subject && (
             <Link
               href="/admin/courses"
-              className="rounded-xl bg-blue-100 px-4 py-2 text-xs font-bold text-blue-700"
+              className="rounded-xl bg-blue-100 px-4 py-2 text-xs font-bold text-blue-700 dark:bg-blue-950/60 dark:text-blue-300"
             >
               {subject} ✕
             </Link>
@@ -116,11 +116,11 @@ export default async function AdminCourses({
             {rows.map((c: any) => (
               <div
                 key={c.id}
-                className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-sm hover:shadow-md transition flex flex-wrap items-center justify-between gap-4"
+                className="rounded-2xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-sm hover:shadow-md transition flex flex-wrap items-center justify-between gap-4 dark:border-slate-800 dark:bg-slate-800/90"
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-3">
-                    <h3 className="truncate font-bold text-base text-slate-900">{c.title}</h3>
+                    <h3 className="truncate font-bold text-base text-slate-900 dark:text-white">{c.title}</h3>
                     <span
                       className={`shrink-0 rounded-full px-3 py-0.5 text-xs font-bold capitalize ${
                         badgeTone[c.status] ?? "bg-slate-100 text-slate-700"
@@ -130,16 +130,16 @@ export default async function AdminCourses({
                     </span>
                   </div>
 
-                  <p className="mt-1 text-xs text-slate-600">
+                  <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
                     by {c.teacher} · {c.category ?? "General"} ·{" "}
                     <span className="capitalize">{c.level}</span>
                   </p>
-                  <p className="mt-1 text-[11px] text-slate-400">
+                  <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
                     {c.lessons} lessons · {c.students} students enrolled
                   </p>
 
                   {c.status === "rejected" && c.rejection_reason && (
-                    <p className="mt-2 text-xs text-rose-700 bg-rose-50 p-2.5 rounded-xl border border-rose-200">
+                    <p className="mt-2 text-xs text-rose-700 bg-rose-50 p-2.5 rounded-xl border border-rose-200 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-200">
                       <span className="font-bold">Rejection reason:</span>{" "}
                       {c.rejection_reason}
                     </p>
@@ -155,7 +155,7 @@ export default async function AdminCourses({
                   ) : (
                     <Link
                       href={`/courses/${c.slug || c.id}`}
-                      className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:border-blue-500 hover:text-blue-600 transition"
+                      className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:border-blue-500 hover:text-blue-600 dark:border-slate-700 dark:bg-slate-700/60 dark:text-slate-200 dark:hover:border-blue-400 dark:hover:text-blue-400 transition"
                     >
                       View Details
                     </Link>
@@ -165,7 +165,7 @@ export default async function AdminCourses({
             ))}
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500">
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500 dark:border-slate-800 dark:bg-slate-800/50 dark:text-slate-400">
             No courses found matching this criteria.
           </div>
         )}
