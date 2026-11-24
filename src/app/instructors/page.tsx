@@ -37,37 +37,37 @@ export default async function Instructors() {
         {rows.length ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {rows.map((r) => (
-              <article key={r.id} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+              <article key={r.id} className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-800/90">
                 <div className="flex items-center gap-4">
-                  <span className="grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-teal-400 to-violet text-xl font-bold text-white">
+                  <span className="grid h-14 w-14 place-items-center rounded-2xl bg-blue-600 text-xl font-bold text-white shadow-md shadow-blue-600/20">
                     {r.name.charAt(0).toUpperCase()}
                   </span>
                   <div>
-                    <h2 className="text-lg font-bold"><Link href={`/instructors/${r.id}`} className="hover:text-brand">{r.name}</Link></h2>
-                    <p className="text-sm text-slate-500">{r.count} published course{r.count === 1 ? "" : "s"}</p>
+                    <h2 className="text-lg font-bold text-slate-900 dark:text-white"><Link href={`/instructors/${r.id}`} className="hover:text-blue-600 dark:hover:text-blue-400 transition">{r.name}</Link></h2>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{r.count} published course{r.count === 1 ? "" : "s"}</p>
                   </div>
                 </div>
 
                 {r.subjects.length > 0 && (
                   <div className="mt-4 flex flex-wrap gap-2">
                     {r.subjects.map((s: string) => (
-                      <span key={s} className="rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold text-brand">{s}</span>
+                      <span key={s} className="rounded-full bg-blue-50 border border-blue-200/60 px-3 py-1 text-xs font-semibold text-blue-700 dark:bg-blue-950/60 dark:border-blue-800 dark:text-blue-300">{s}</span>
                     ))}
                   </div>
                 )}
 
                 {r.titles.length > 0 ? (
-                  <ul className="mt-4 space-y-1 text-sm text-slate-600">
+                  <ul className="mt-4 space-y-1 text-sm text-slate-600 dark:text-slate-300">
                     {r.titles.map((t: string) => <li key={t} className="truncate">• {t}</li>)}
                   </ul>
                 ) : (
-                  <p className="mt-4 text-sm text-slate-400">No published courses yet.</p>
+                  <p className="mt-4 text-sm text-slate-400 dark:text-slate-500">No published courses yet.</p>
                 )}
               </article>
             ))}
           </div>
         ) : (
-          <p className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500">No instructors yet.</p>
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500 dark:border-slate-800 dark:bg-slate-800/50 dark:text-slate-400">No instructors yet.</div>
         )}
       </div>
     </>

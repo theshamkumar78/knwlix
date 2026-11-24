@@ -63,32 +63,32 @@ export default async function InstructorProfile({
   );
 
   return (
-    <main className="min-h-screen bg-[#f8fafc] text-slate-900 pb-20">
+    <main className="min-h-screen bg-[#f8fafc] text-slate-900 dark:bg-[#0b1329] dark:text-white pb-20 transition-colors">
       {/* 1. Header Profile Banner */}
       <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-10 pb-6">
         <Link
           href="/courses"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 transition hover:text-blue-600"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 transition"
         >
           <ArrowLeft size={14} /> Back to courses
         </Link>
 
-        <div className="mt-6 rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm flex flex-wrap items-center gap-6">
+        <div className="mt-6 rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm dark:border-slate-800 dark:bg-slate-800/90 flex flex-wrap items-center gap-6">
           <span className="grid h-24 w-24 place-items-center rounded-3xl bg-blue-600 text-4xl font-extrabold text-white shadow-lg shadow-blue-600/25">
             {name.charAt(0).toUpperCase()}
           </span>
 
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
                 {name}
               </h1>
-              <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700 border border-blue-200 capitalize">
+              <span className="rounded-full bg-blue-50 border border-blue-200 px-3 py-1 text-xs font-bold text-blue-700 dark:bg-blue-950/60 dark:border-blue-800 dark:text-blue-300 capitalize">
                 Verified {p.role}
               </span>
             </div>
 
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
               {ip?.headline ?? "Instructor & Academic Specialist at Knowlix"}
             </p>
 
@@ -97,7 +97,7 @@ export default async function InstructorProfile({
                 {subjects.map((s) => (
                   <span
                     key={s}
-                    className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 border border-slate-200"
+                    className="rounded-full bg-slate-100 border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200"
                   >
                     {s}
                   </span>
@@ -113,21 +113,21 @@ export default async function InstructorProfile({
         {(ip?.bio || ip?.experience) && (
           <section className="grid gap-6 md:grid-cols-2">
             {ip?.bio && (
-              <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-                <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <Sparkles size={16} className="text-blue-600" /> About
+              <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-800/90">
+                <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <Sparkles size={16} className="text-blue-600 dark:text-blue-400" /> About
                 </h2>
-                <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-600">
+                <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">
                   {ip.bio}
                 </p>
               </div>
             )}
             {ip?.experience && (
-              <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-                <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-800/90">
+                <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
                   <Award size={16} className="text-amber-500" /> Experience & Background
                 </h2>
-                <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-600">
+                <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-slate-600 dark:text-slate-300">
                   {ip.experience}
                 </p>
               </div>
@@ -138,10 +138,10 @@ export default async function InstructorProfile({
         {/* 3. Courses by Instructor */}
         <section>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
-              <BookOpen size={22} className="text-blue-600" /> Courses by {name}
+            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+              <BookOpen size={22} className="text-blue-600 dark:text-blue-400" /> Courses by {name}
             </h2>
-            <span className="text-xs font-bold text-slate-500">
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
               {courses.length} course{courses.length === 1 ? "" : "s"} published
             </span>
           </div>
@@ -153,7 +153,7 @@ export default async function InstructorProfile({
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500">
+            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center text-slate-500 dark:border-slate-800 dark:bg-slate-800/50 dark:text-slate-400">
               <p>No published courses by this instructor yet.</p>
             </div>
           )}
