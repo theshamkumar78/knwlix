@@ -1,6 +1,4 @@
 
-"use client";
-
 import Link from "next/link";
 import { ChevronDown, HelpCircle, ArrowRight } from "lucide-react";
 import { FAQS } from "@/lib/faqs";

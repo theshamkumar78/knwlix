@@ -37,6 +37,35 @@ export default function AuthForm({
   const passwordsMatch =
     confirmPassword.length > 0 && password === confirmPassword;
 
+  async function signInWithGoogle() {
+    setMsg(null);
+    setBusy(true);
+
+    try {
+      const sb = createClient();
+      const next = params.get("next");
+      const target = next && next.startsWith("/") ? next : "/dashboard";
+
+      const { error } = await sb.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(target)}`,
+        },
+      });
+
+      if (error) {
+        setMsg({ ok: false, text: error.message });
+        setBusy(false);
+      }
+    } catch {
+      setMsg({
+        ok: false,
+        text: "Google sign-in could not start. Please try again.",
+      });
+      setBusy(false);
+    }
+  }
+
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setMsg(null);
@@ -189,6 +218,37 @@ export default function AuthForm({
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                   Enter your email address to receive a secure password reset link.
                 </p>
+              </div>
+            )}
+
+            {/* Google Sign-in Option */}
+            {mode !== "forgot" && (
+              <div className="mb-6">
+                <button
+                  type="button"
+                  onClick={signInWithGoogle}
+                  disabled={busy}
+                  className="w-full flex items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white py-3 px-4 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:border-slate-300 active:scale-[0.99] disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700/80"
+                >
+                  <svg viewBox="0 0 48 48" className="h-5 w-5 shrink-0" aria-hidden="true">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.42 37.97 46.98 31.8 46.98 24.55z" />
+                    <path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19z" />
+                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.14 1.45-4.89 2.3-8.18 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+                  </svg>
+                  <span>{busy ? "Connecting…" : "Continue with Google"}</span>
+                </button>
+
+                <div className="relative my-5">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-slate-200 dark:border-slate-700" />
+                  </div>
+                  <div className="relative flex justify-center text-xs">
+                    <span className="bg-white px-3 font-semibold uppercase tracking-wider text-slate-400 dark:bg-slate-800 dark:text-slate-400">
+                      or continue with email
+                    </span>
+                  </div>
+                </div>
               </div>
             )}
 
